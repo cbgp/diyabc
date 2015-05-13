@@ -9,6 +9,7 @@
 #include <omp.h>
 #include <cstdlib>
 #include <stdexcept>
+#include <vector>
 extern "C"
 {
 #include "../dcmt0.6.1/include/dc.h"
@@ -24,52 +25,18 @@ extern "C"
 #include "simfile.h"
 #include "modchec.h"
 #include "randomgenerator.h"
-
-/*
-#ifndef PARTICLESET
-#include "particleset.cpp"
-#define PARTICLESET
-#endif
-#ifndef REFTABLE
-#include "reftable.cpp"
-#define REFTABLE
-#endif
-#ifndef ESTIMPARAM
-#include "estimparam.cpp"
-#define ESTIMPARAM
-#endif
-#ifndef COMPARSCEN
-#include "comparscen.cpp"
-#define COMPARSCEN
-#endif
-#ifndef BIAS
-#include "bias.cpp"
-#define BIAS
-#endif
-#ifndef CONF
-#include "conf.cpp"
-#define CONF
-#endif
-#ifndef SIMF
-#include "simfile.cpp"
-#define SIMF
-#endif
-
-#ifndef ACPLOC
-#include "acploc.cpp"
-#define ACPLOC
-#endif
-#ifndef MODCHEC
-#include "modchec.cpp"
-#define MODCHEC
-#endif
-*/
-
+#include "data.h"
 #include "particuleC.h"
+#include "history.h"
+#include "randforest.h"
 
 extern "C" void __libc_freeres(void);
 
-#define NSTAT 44
+#define NSTAT 43
+
+DataC dataobs,datasim;
+vector <LocusGroupC> groupe;
+vector <ScenarioC> scenario;
 
 
 string* stat_type;
@@ -79,8 +46,8 @@ ofstream fprog;
 ofstream fpar;
 
 void initstat_typenum(){
-	string stat_type0[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO","PPL"};
-	int stat_num0[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 ,50};
+	string stat_type0[NSTAT] = {"PID","NAL","HET","VAR","MGW","N2P","H2P","V2P","FST","LIK","DAS","DM2","AML","NHA","NSS","MPD","VPD","DTA","PSS","MNS","VNS","NH2","NS2","MP2","MPB","HST","SML","HP0","HM1","HV1","HMO","NP0","NM1","NV1","NMO","FP0","FM1","FV1","FMO","AP0","AM1","AV1","AMO"};
+	int stat_num0[NSTAT]     = {  0  ,  1  ,  2  ,  3  ,  4  ,  5  ,  6  ,  7  ,  8  ,  9  ,  10 ,  11 ,  12 , -1  , -2  , -3  , -4  , -5  , -6  , -7  , -8  , -9  , -10 , -11 , -12 , -13 , -14 ,  21 ,  22 ,  23 ,  24 ,  25 ,  26 ,  27 ,  28 ,  29 ,  30 ,  31 ,  32 ,  33 ,  34 ,  35 ,  36 };
 /*  Numérotation des stat
  * 	1 : nal			-1 : nha			 21 : moyenne des genic diversities
  *  2 : het			-2 : nss             22 : variance des genic diversities
@@ -99,7 +66,7 @@ void initstat_typenum(){
  * 										 35 : premier quartile des estimations d'admixture
  * 										 36 : troisième quartile des estimations d'admixture
  * 
- * 100 : proportion of polymorphic loci (SNP)
+ * 
  */
 	stat_type = new string[NSTAT];
 	for(int i=0; i<NSTAT; ++i)
@@ -180,7 +147,7 @@ int readheaders() {
 		stringstream erreur;
 		erreur << "Erreur dans readheaders().\n" << header.message;
 		throw std::runtime_error(erreur.str()); // exit(1)
-	}
+	} 
     message=header.calstatobs(statobsfilename);                          if (debuglevel==1) cout <<"apres header.calstatobs\n";
     datafilename= header.datafilename;                                   if (debuglevel==1) cout<<"datafile name : "<<header.datafilename<<"\n";
 	k=rt.testfile(reftablefilename,nenr);
@@ -251,10 +218,10 @@ try {
 	int computer_identity = 0; // should be 0 if diyabc runs on a single computer
     char action='a';
     bool flagp=false,flagi=false,flags=false,simOK,stoprun=false;
-    string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar;
+    string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar, randforpar;
 
     debut=walltime(&clock_zero);
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:R:F:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -293,6 +260,15 @@ try {
             cout << "           l:<number of simulated datasets used in the logistic regression>\n";
             cout << "           m:<number of requested logistic regressions>\n";
 
+			cout << "\n-F to run a comparison of scenarios based on random forests(idem)\n";
+			cout << "           s:<chosen scenario[s separated by a comma]>\n";
+            cout << "           n:<number of simulated datasets taken from reftable>\n";
+            cout << "           t:<number of trees (default=500)>\n";
+			cout << "           b:<size of the bootstrap sample per tree>\n";
+			cout << "           k:<number of summary statistics to draw at each node (defaut=sqrt(number of stat))\n";
+			cout << "           d:<if present, add linear discriminant scores to summary statistics\n";
+			cout << "           o:<number of most effective summary statistics to be shown (default=30case)\n";
+			
             cout << "\n-b for BIAS/PRECISION COMPUTATIONS (idem)\n";
             cout << "           s:<chosen scenario<\n";
             cout << "           n:<number of simulated datasets taken from reftable>\n";
@@ -342,7 +318,8 @@ try {
 
             cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
 			cout << "\n-o to simulate summary statistics from a text file containing scenario and parameter values\n";
-            action = 'h';
+			cout << "\n-R <number of required data sets in a reftable file (reftableRF.bin) with all possible summary statistics> (also produces a corresponding statobsRF.txt)\n";
+			action = 'h';
            break;
 
 
@@ -420,6 +397,23 @@ try {
             action='d';cout<<"option -d "<<optarg<<"      "<<soptarg<<"\n";
             break;
 
+        case 'R' :
+            nrecneeded = atoi(optarg);
+            action='r';
+            randomforest=true;
+			reftablefilename= path + "reftableRF.bin";
+			statobsfilename = path + "statobsRF.txt";
+			cout<<"simulating data sets with all summary statistics\n";
+            break;
+
+        case 'F' :
+			randforpar = soptarg;
+            randomforest=true;
+			reftablefilename= path + "reftableRF.bin";
+			statobsfilename = path + "statobsRF.txt";
+            action='F';
+            break;
+
         case 'k' :
             action='k';
             break;
@@ -472,6 +466,7 @@ try {
                      if (action=='d') ident=strdup("pcaloc1");
                      if (action=='j') ident=strdup("modchec1");
 					 if (action=='o') ident=strdup("statfile.txt");
+					 if (action=='F') ident=strdup("rf1");
      }
      if (not flags) seed=time(NULL); // TODO: remove this
      if (num_threads>0) omp_set_num_threads(num_threads);
@@ -522,16 +517,16 @@ try {
     	           cout<<"debut de l'action r\n";
 					k=readheaders();
 					cout<<"apres readheader   k="<<k<<"\n";
-                   cout << header.dataobs.title << "\n nloc = "<<header.dataobs.nloc<<"   nsample = "<<header.dataobs.nsample<<"   ";fflush(stdin);
+                   cout << dataobs.title << "\n nloc = "<<dataobs.nloc<<"   nsample = "<<dataobs.nsample<<"   ";fflush(stdin);
                    cout<<"k="<<k<<"\n";
 				   if (k==1) { cout<<"general k==1\n";
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
-                              rt.nrecscen = new int[header.nscenarios];
-                              for (int i=0;i<header.nscenarios;i++) rt.nrecscen[i]=0;
-                              rt.nparam = new int[header.nscenarios];
-                              for (int i=0;i<header.nscenarios;i++) rt.nparam[i]=header.scenario[i].nparamvar;
+                              rt.nrecscen = vector <int>(scenario.size());
+                              for (int i=0;i<scenario.size();i++) rt.nrecscen[i]=0;
+                              rt.nparam = vector <int>(scenario.size());
+                              for (int i=0;i<scenario.size();i++) rt.nparam[i]=scenario[i].nparamvar;
                               rt.nstat=header.nstat;
 							  cout<<"general avant rt.writeheader\n";
 							  rt.filename=reftablefilename;
@@ -541,14 +536,14 @@ try {
                         	  throw std::runtime_error("cannot create reftable file\n");
                         	  //cout<<"cannot create reftable file\n"; exit(1);
                           }
-                          cout<<"DEBUT  nrecneeded="<<nrecneeded<<"   rt.nrec="<<rt.nrec<<"    rt.nstat="<<rt.nstat<<"\n";
+                          cout<<"DEBUT  nrecneeded="<<nrecneeded<<"   rt.nrec="<<rt.nrec<<"    rt.nstat="<<rt.nstat<<"   nscenarios="<<scenario.size()<<"\n";
                           if (nrecneeded>rt.nrec) {
                                 rt.openfile();
                                 enreg = new enregC[nenr];
                                 for (int p=0;p<nenr;p++) {
-                                    enreg[p].stat = new float[header.nstat];
+                                    enreg[p].stat = vector <float>(header.nstat);
 									//cout<<"enreg.param = new float["<<header.nparamtot+3*header.ngroupes <<"]\n";
-                                    enreg[p].param = new float[header.nparamtot+3*header.ngroupes];
+                                    enreg[p].param = vector <float>(header.nparamtot+3*header.ngroupes);
                                     enreg[p].numscen = 1;
                                 }
                                 cout<<"nparammax="<<header.nparamtot+3*header.ngroupes<<"\n";
@@ -562,8 +557,8 @@ try {
 									scsufilename=path+"scenariosuccess.txt";
 								}
                                   while ((not stoprun)and(nrecneeded>rt.nrec)) {
-                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"\n";
-                                          ps.dosimultabref(header,nenr,false,multithread,firsttime,0,seed,0);
+                                          //cout<<"avant dosimultabref rt.nrec="<<rt.nrec<<"    nenr="<<nenr<<"   nscenarios="<<scenario.size()<<"\n";
+                                          ps.dosimultabref(nenr,false,multithread,firsttime,0,seed,0);
                                           //cout<<"retour de dosimultabref header.drawuntil="<<header.drawuntil<<"\n";
 										  
                                           if (header.drawuntil){
@@ -606,8 +601,8 @@ try {
 											if (nenrOK>0){
 												enregOK = new enregC[nenrOK];
 												for (int p=0;p<nenrOK;p++) {
-													enregOK[p].stat = new float[header.nstat];
-													enregOK[p].param = new float[header.nparamtot+3*header.ngroupes];
+													enregOK[p].stat = vector <float>(header.nstat);
+													enregOK[p].param = vector <float>(header.nparamtot+3*header.ngroupes);
 													enregOK[p].numscen = 1;
 												}
 												nenrOK=0;
@@ -629,8 +624,8 @@ try {
 												stoprun = (stat(stopfilename.c_str(),&stFileInfo)==0);
 												if (stoprun) remove(stopfilename.c_str());
 												for (int i=0;i<nenrOK;i++) {
-														delete [] enregOK[i].param;
-														delete [] enregOK[i].stat;
+														enregOK[i].param.clear();
+														enregOK[i].stat.clear();
 												}
 												delete [] enregOK;
 											}
@@ -640,8 +635,8 @@ try {
                                   }
                                   //cout<<"fin du while\n";
                                   for (int i=0;i<nenr;i++) {
-                                        delete [] enreg[i].param;
-                                        delete [] enreg[i].stat;
+                                        if (not enreg[i].param.empty()) enreg[i].param.clear();
+                                        if (not enreg[i].stat.empty()) enreg[i].stat.clear();
                                   }
                                   //cout<<"avant delete [] enreg\n";
                                   delete [] enreg;
@@ -676,12 +671,18 @@ try {
 
        case 'b'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
+                  
                   dobias(biaspar,seed);
                   break;
 
        case 'f'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   doconf(confpar,seed);
+                  break;
+
+       case 'F'  : k=readheaders();
+                  if (k==1) {cout <<"no file reftableRF.bin in the current directory\n";exit(1);}
+                  dorandfor(randforpar,seed);
                   break;
 
        case 'k'  : k=readheadersim();
@@ -696,6 +697,7 @@ try {
 
        case 'j'  : k=readheaders();
                    if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
+                   nenr=10;
                    domodchec(modpar,seed);
                    break;
 				   
@@ -732,9 +734,9 @@ try {
 	//cout<<"avant les delete []\n";
 	if (rt.mutparam !=NULL) {delete [] rt.mutparam;rt.mutparam=NULL;}
 	//cout<<"1\n";
-	if (rt.nparam !=NULL) {delete [] rt.nparam;rt.nparam=NULL;}
+	if (not rt.nparam.empty()) rt.nparam.clear();
 	//cout<<"2\n";
-	if (rt.nrecscen !=NULL) {delete [] rt.nrecscen;rt.nrecscen=NULL;}
+	if (not rt.nrecscen.empty()) rt.nrecscen.clear();
 	//cout<<"3\n";
 	/*if (action !='k'){
 		for (int iscen=0;iscen<header.nscenarios;iscen++) {

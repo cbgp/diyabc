@@ -56,34 +56,10 @@ extern int debuglevel;
  */
 
 /**
- * Copie du contenu d'une classe StatsnpC
- */
-  StatsnpC::StatsnpC (StatsnpC const & source) {
-	this->cat = source.cat;
-	this->samp = source.samp;
-	this->samp1 = source.samp1;
-	this->samp2 = source.samp2;
-	this->group = source.group;
-	this->n = source.n;
-	this->defined = source.defined;
-	this->sw = source.sw;
-    if (source.x != NULL){
-		this->x = new long double[n];
-		for (int i=0;i<n;i++) this->x[i] = source.x[i];
-	} else this->x = NULL;
-    if (source.w != NULL){
-		this->w = new long double[n];
-		for (int i=0;i<n;i++) this->w[i] = source.w[i];
-	} else this->w = NULL;
-}
-
-/**
  * Definition de l'operateur = pour une instance de la classe StatsnpC
  */
   StatsnpC & StatsnpC::operator= (StatsnpC const & source) {
 	if (this== &source) return *this;
-    if( this->x != NULL) delete [] this->x;
-    if( this->w != NULL) delete [] this->w;
 	this->cat = source.cat;
 	this->samp = source.samp;
 	this->samp1 = source.samp1;
@@ -92,13 +68,15 @@ extern int debuglevel;
 	this->n = source.n;
 	this->defined = source.defined;
 	this->sw = source.sw;
-    if (source.x != NULL){
-		this->x = new long double[this->n];
-		for (int i=0;i<this->n;i++) this->x[i] = source.x[i];
+	if(not this->x.empty()) this->x.clear();
+	if(not source.x.empty()) {
+		this->x = vector<long double>(source.x.size());
+		for (int i=0;i<source.x.size();i++) this->x[i] = source.x[i];
 	}
-    if (source.w != NULL){
-		this->w = new long double[this->n];
-		for (int i=0;i<this->n;i++) this->w[i] = source.w[i];
+	if(not this->w.empty()) this->w.clear();
+	if(not source.w.empty()) {
+		this->w = vector<long double>(source.w.size());
+		for (int i=0;i<source.w.size();i++) this->w[i] = source.w[i];
 	}
 	return *this;
 }
@@ -341,56 +319,60 @@ void HistParameterC::ecris(bool simulfile){
 /**
  * Definition de l'operateur = pour une instance de la classe LocusGroupC
  */
- /* LocusGroupC & LocusGroupC::operator= (LocusGroupC const & source) {
+  LocusGroupC & LocusGroupC::operator= (LocusGroupC const & source) {
 	if (this== &source) return *this;
-    if( this->loc != NULL) delete [] this->loc;
-    if( this->sumstat != NULL) delete [] this->sumstat;
-    if( this->sumstatsnp != NULL) delete [] this->sumstatsnp;
 	this->nloc = source.nloc;
-	this->nstat = source.nstat;
-	this->nstatsnp = source.nstatsnp;
 	this->type = source.type;
-	this->p_fixe = source.p_fixe;
-	this->gams = source.gams;
-	this->musmoy = source.musmoy;
-	this->mutmoy = source.mutmoy;
-	this->Pmoy = source.Pmoy;
-	this->snimoy = source.snimoy;
-	this->k1moy = source.k1moy;
-	this->k2moy = source.k2moy;
-	this->mutmod = source.mutmod;
-	this->priormusmoy = source.priormusmoy;
-	this->priork1moy = source.priork1moy;
-	this->priork2moy = source.priork2moy;
-	this->priormusloc = source.priormusloc;
-	this->priork1loc = source.priork1loc;
-	this->priork2loc = source.priork2loc;
-	this->priormutmoy = source.priormutmoy;
-	this->priorPmoy = source.priorPmoy;
-	this->priorsnimoy = source.priorsnimoy;
-	this->priormutloc = source.priormutloc;
-	this->priorPloc = source.priorPloc;
-	this->priorsniloc = source.priorsniloc;
-	if (source.loc != NULL) {
-		this->loc = new int[this->nloc];
+    if(not this->loc.empty()) this->loc.clear();
+	if (not source.loc.empty()) {
+		this->loc = vector <int>(this->nloc);
 		for (int i=0;i<this->nloc;i++) this->loc[i] = source.loc[i];
 	}
-	if (source.sumstat != NULL) {
-		this->sumstat = new StatC[this->nstat];
+	
+	if (this->type == 0) {	//MICROSAT
+		this->mutmoy = source.mutmoy;
+		this->priormutmoy = source.priormutmoy;
+		this->priormutloc = source.priormutloc;
+		this->Pmoy = source.Pmoy;
+		this->priorPmoy = source.priorPmoy;
+		this->priorPloc = source.priorPloc;
+		this->snimoy = source.snimoy;
+		this->priorsnimoy = source.priorsnimoy;
+		this->priorsniloc = source.priorsniloc;
+	}
+	else if (this->type == 1) {	//DNA SEQUENCES
+		this->mutmod = source.mutmod;
+		this->p_fixe = source.p_fixe;
+		this->gams = source.gams;
+		this->musmoy = source.musmoy;
+		this->priormusmoy = source.priormusmoy;
+		this->priormusloc = source.priormusloc;
+		if (this->mutmod>0) {
+			this->k1moy = source.k1moy;
+			this->priork1loc = source.priork1loc;
+			this->priork1loc = source.priork1loc;
+		}
+		if (this->mutmod>2) {
+			this->k2moy = source.k2moy;
+			this->priork2moy = source.priork2moy;
+			this->priork2loc = source.priork2loc;
+		}
+	}
+	this->nstat = source.nstat;
+	if(not this->sumstat.empty()) this->sumstat.clear();
+	if (not source.sumstat.empty()) {
+		this->sumstat = vector <StatC>(this->nstat);
 		for (int i=0;i<this->nstat;i++) this->sumstat[i] = source.sumstat[i];
 	}
-	if (source.sumstatsnp != NULL) {
-		this->sumstatsnp = new StatsnpC[this->nstatsnp];
+	this->nstatsnp = source.nstatsnp;
+	if(not this->sumstatsnp.empty()) this->sumstatsnp.clear();
+	if (not source.sumstatsnp.empty()) {
+		this->sumstatsnp = vector <StatsnpC>(this->nstatsnp);
 		for (int i=0;i<this->nstatsnp;i++) this->sumstatsnp[i] = source.sumstatsnp[i];
 	}
 	return *this;
   }
-  */
-void LocusGroupC::libere(){
-    loc.clear();
-    this->sumstat.clear();
-
-  }
+  
 
 /**
  * Méthodes de ScenarioC 
@@ -449,16 +431,8 @@ void ScenarioC::libere() {
  * Definition de l'operateur = pour une instance de la classe ScenarioC
  */
 
-/*ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
+ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 	if (this == &source)  return *this;
-
-	if( this->paramvar != NULL) {delete [] this->paramvar; this->paramvar=NULL;}
-	if( this->time_sample != NULL) {delete [] this->time_sample;this->time_sample=NULL;}
-	if( this->stime_sample != NULL) {delete [] this->stime_sample; this->stime_sample=NULL;}
-	if( this->event != NULL) {delete [] this->event; this->event=NULL;}
-	if( this->ne0 != NULL) {delete [] this->ne0; this->ne0=NULL;}
-	if( this->histparam != NULL) {delete [] this->histparam; this->histparam=NULL;}
-	if( this->condition != NULL) {delete [] this->condition; this->condition=NULL;}
 
 	this->prior_proba = source.prior_proba;
 	this->number = source.number;
@@ -470,37 +444,52 @@ void ScenarioC::libere() {
 	this->nevent = source.nevent;
 	this->nn0 = source.nn0;
 	this->nconditions = source.nconditions;
-	if (source.event != NULL) {
-		this->event = new EventC[this->nevent];
+	
+	if(not this->event.empty()) this->event.clear();
+	if (not source.event.empty()) {
+		this->event = vector <EventC>(this->nevent);
 		for (int i=0;i<this->nevent;i++) this->event[i] = source.event[i]; // copyevent supprimé (PP)
 	}
-	if (source.ne0 != NULL) {
-		this->ne0 = new Ne0C[this->nn0];
+
+	if(not this->ne0.empty()) this->ne0.clear();
+	if (not source.ne0.empty()) {
+		this->ne0 = vector <Ne0C>(this->nn0);
 		for (int i=0;i<this->nn0;i++) this->ne0[i] = source.ne0[i];
 	}
-	if (source.time_sample != NULL) {
-		this->time_sample = new int[this->nsamp];
+	
+	if(not this->time_sample.empty()) this->time_sample.clear();
+	if (not source.time_sample.empty()) {
+		this->time_sample = vector <int>(this->nsamp);
 		for (int i=0;i<this->nsamp;i++) this->time_sample[i] = source.time_sample[i];
 	}
-	if (source.stime_sample != NULL) {
-		this->stime_sample = new string[this->nsamp];
+	
+	if(not this->stime_sample.empty()) this->stime_sample.clear();
+	if (not source.stime_sample.empty()) {
+		this->stime_sample = vector <string>(this->nsamp);
 		for (int i=0;i<this->nsamp;i++) this->stime_sample[i] = source.stime_sample[i];
 	}
-	if (source.histparam != NULL) {
-		this->histparam = new HistParameterC[this->nparam];
+	
+	if(not this->histparam.empty()) this->histparam.clear();
+	if (not source.histparam.empty()) {
+		this->histparam = vector <HistParameterC>(this->nparam);
 		for (int i=0;i<this->nparam;i++) this->histparam[i] = source.histparam[i];
 	}
-	if (source.paramvar != NULL) {
-		this->paramvar = new double[this->nparamvar];
+	
+	if(not this->paramvar.empty()) this->paramvar.clear();
+	if (not source.paramvar.empty()) {
+		this->paramvar = vector <double>(this->nparamvar);
 		for (int i=0;i<this->nparamvar;i++) this->paramvar[i] = source.paramvar[i];
 	}
-	if (source.condition != NULL) {
-		this->condition = new ConditionC[this->nconditions];
+	
+	if(not this->condition.empty()) this->condition.clear();
+	if (not source.condition.empty()) {
+		this->condition = vector <ConditionC>(this->nconditions);
 		for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
 	}
+	
 	return *this;
 };
-*/
+
 
 void ScenarioC::ecris(bool simulfile) {
     cout <<"scenario "<<this->number<<"   ("<<this->prior_proba<<")\n";
@@ -862,44 +851,30 @@ void SequenceBitC::ecris(){
     }
   }
 
-
-/* Méthodes de GeneTreeC */
-
-GeneTreeC::GeneTreeC(GeneTreeC const & source) {
-  this->nnodes = source.nnodes;
-  this->ngenes = source.ngenes;
-  this->nbranches = source.nbranches;
-  this->nbOK = source.nbOK;
-  this->nbOKOK = source.nbOKOK;
-  this->branches = new BranchC[this->nbranches];
-  this->nodes = new NodeC[this->nnodes];
-  for (int b=0;b<this->nbranches;b++) {
-    this->branches[b] = source.branches[b];
-  }
-  for (int n=0;n<this->nnodes;n++) {
-    this->nodes[n] = source.nodes[n];
-  }
+void GeneTreeC::ecris() {
+	for (int b=0;b<nbranches;b++) {
+		cout<<"Branche "<<b<<"   top = "<<this->branches[b].top<<"   bottom = "<<this->branches[b].bottom<<"   length = "<<this->branches[b].length<<"\n";
+	}
 }
-
 
 GeneTreeC & GeneTreeC::operator=(GeneTreeC const & source) {
   if( this == &source)
     return *this;
 
-  if( this->nodes != NULL) delete [] this->nodes;
-  if( this->branches != NULL) delete [] this->branches;
+  if(not this->nodes.empty()) this->nodes.clear();
+  if(not this->branches.empty()) this->branches.clear();
 
   this->nnodes = source.nnodes;
   this->ngenes = source.ngenes;
   this->nbranches = source.nbranches;
   this->nbOK = source.nbOK;
   this->nbOKOK = source.nbOKOK;
-  if (source.branches != NULL) {
-	this->branches = new BranchC[this->nbranches];
+  if (not source.branches.empty()) {
+	this->branches = vector <BranchC>(this->nbranches);
 	for (int b=0;b<this->nbranches;b++) this->branches[b] = source.branches[b];
   }
-  if (source.nodes != NULL) {
-	this->nodes = new NodeC[this->nnodes];
+  if (not source.nodes.empty()) {
+	this->nodes = vector <NodeC>(this->nnodes);
 	for (int n=0;n<this->nnodes;n++) this->nodes[n] = source.nodes[n];
   }
   return *this;

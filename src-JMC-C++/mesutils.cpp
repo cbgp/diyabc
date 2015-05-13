@@ -684,7 +684,7 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     }
     snk=0;for (size_t i=0;i<nk.size();i++) snk += nk[i];
     //cout<<"apres calcul snk\n";
-    if (nl!=snk) {cout<< "dans AFD nl!=snk\n";exit(1);}
+    if (nl!=snk) {cout<< "dans AFD nl("<<nl<<") !=snk("<<snk<<")\n";exit(1);}
     matC = new long double*[nc];for (int i=0;i<nc;i++) matC[i] = new long double[numpop.size()];
     matCT = new long double*[numpop.size()];for (size_t i=0;i<numpop.size();i++) matCT[i] = new long double[nc];
     //matM = new *double[nc];for (int i=0;i<nc;i++) matM[i] = new double[nc];

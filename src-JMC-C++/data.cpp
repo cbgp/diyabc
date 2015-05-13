@@ -539,15 +539,18 @@ string  getligne(ifstream file) {
 				for (ech=0;ech<this->nsample;ech++) {
 					for (ind=0;ind<this->nind[ech];ind++) {
 						//cout<<"sexe="<<this->indivsexe[ech][ind]<<"   genotype="<<genotype[ech][ind][loc]<<"\n";
-						if ((this->locus[loc].type==10)or((this->locus[loc].type==12)and(this->indivsexe[ech][ind]==2))) {
+						if (this->indivsexe[ech][ind]==2) {
 							if (genotype[ech][ind][loc]=="0") n0+=2;
 							else if (genotype[ech][ind][loc]=="1") {n0++;n2++;}
 							else if (genotype[ech][ind][loc]=="2") n2+=2;
 						} else {
-							if (genotype[ech][ind][loc]=="0") n0++;
-							else if (genotype[ech][ind][loc]=="1") n2++;
+							if (this->indivsexe[ech][ind]==1) {
+								if (genotype[ech][ind][loc]=="0") n0++;
+								else if (genotype[ech][ind][loc]=="1") n2++;
+							}
 						}
 					}
+					ind0=-1;
 				}
 				this->locus[loc].mono=(n0+n2<1);
 				if (not this->locus[loc].mono) {

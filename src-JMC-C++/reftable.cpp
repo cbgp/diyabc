@@ -30,6 +30,7 @@ using namespace std;
 extern int nrecneeded;
 extern double remtime,debutr;
 extern string  progressfilename,path;
+extern vector <ScenarioC> scenario;
 
 
 
@@ -44,35 +45,35 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	cout<<"debut de sethistparamname\n";
 	int nparamvar=0,pp;
 	this->nparamut = header.nparamut;
-	cout<<"nparamut="<<header.nparamut<<"    nscenarios="<<header.nscenarios<<"\n";
+	cout<<"nparamut="<<header.nparamut<<"    nscenarios="<<scenario.size()<<"\n";
 	if(this->nhistparam != NULL) {
 		delete [] nhistparam;
 		nhistparam = NULL;
 	}
-	this->nhistparam = new int[header.nscenarios];
-	this->histparam.resize(header.nscenarios,vector<HistParameterC>(0));
-	this->histparamlength = header.nscenarios;
+	this->nhistparam = new int[scenario.size()];
+	this->histparam.resize(scenario.size(),vector<HistParameterC>(0));
+	this->histparamlength = scenario.size();
 	if (this->mutparam != NULL) {
 		delete [] mutparam;
 		mutparam = NULL;
 	}
 	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
-	cout<<"avant la boucle des scenarios  nscenarios ="<<header.nscenarios<<"\n";
-	for (int i=0;i<header.nscenarios;i++) {
+	cout<<"avant la boucle des scenarios  nscenarios ="<<scenario.size()<<"\n";
+	for (int i=0;i<scenario.size();i++) {
 		nparamvar=0;
-		for (int p=0;p<header.scenario[i].nparam;p++)
-			if (not header.scenario[i].histparam[p].prior.constant)
+		for (int p=0;p<scenario[i].nparam;p++)
+			if (not scenario[i].histparam[p].prior.constant)
 				nparamvar++;
-		cout<<"scenario "<<i<<"   header.scenario[i].nparam="<<header.scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
+		cout<<"scenario "<<i<<"   scenario[i].nparam="<<scenario[i].nparam <<"  nparamvar="<<nparamvar<<"\n";
 		this->histparam[i].reserve(nparamvar+2);
 		this->nhistparam[i] = nparamvar;
 		pp=-1;//cout<<header.scenario[i].nparam<<"\n";
-		for (int p=0;p<header.scenario[i].nparam;p++)
-			if (not header.scenario[i].histparam[p].prior.constant) {
+		for (int p=0;p<scenario[i].nparam;p++)
+			if (not scenario[i].histparam[p].prior.constant) {
 				pp++;
-				this->histparam[i].push_back(header.scenario[i].histparam[p]);
+				this->histparam[i].push_back(scenario[i].histparam[p]);
 			}
-		if (this->nparam !=NULL){
+		if (not this->nparam.empty()){
 			//cout<<"coucou this->nparam[i] = "<<this->nparam[i]<<"   nparamvar="<<nparamvar<<"   header.nparamut="<<header.nparamut<<"\n";
 			{if (this->nparam[i]!=nparamvar+header.nparamut) {
 				cout<<"PROBLEME scenario "<<i<<"  nparam="<<this->nparam[i]<<"  nparamvar="<<nparamvar<<"   nmutparam="<<nparamut<<"\n";
@@ -104,15 +105,11 @@ int ReftableC::readheader(string fname,string flogname,string freftabscen) {
 		f0.read((char*)&(this->nrec),sizeof(int));
 		f0.read((char*)&(this->nscen),sizeof(int));
 		//cout <<"readheader.readheader    nscen = "<<this->nscen<<"   nrec="<<this->nrec<<"\n";
-		if (nrecscen != NULL) {
-			delete[] nrecscen; nrecscen = NULL;
-		}
-		this->nrecscen = new int[this->nscen];
+		if (not nrecscen.empty()) nrecscen.clear();
+		this->nrecscen = vector <int>(this->nscen);
 		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
-		if (nparam != NULL) {
-			delete [] nparam; nparam = NULL;
-		}
-		this->nparam = new int[nscen];
+		if (not this->nparam.empty()) this->nparam.clear();
+		this->nparam = vector <int>(nscen);
 		for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nparam[i]),sizeof(int));cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";}
 		f0.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
 		f0.close();
@@ -141,6 +138,7 @@ int ReftableC::readrecord(enregC *enr) {
 	int bidon=0;
 	//cout<<"debut de readrecord\n";
 	//try {
+	if (this->fifo.eof()) {return 1;}
 	this->fifo.read((char*)&(enr->numscen),sizeof(int));
 
 	if (enr->numscen>this->nscen) {
@@ -176,15 +174,15 @@ int ReftableC::readrecord(enregC *enr) {
 	return bidon;
 }
 
-int ReftableC::readparam(float *param) {
-	int numscen,nm;
-	float *pa;
+int ReftableC::readparam(vector <float>& param) {
+	int numscen;
+	float pa;
 	this->fifo.read((char*)&(numscen),sizeof(int));
-	nm=this->nparam[numscen-1];if(nm<nstat) nm=nstat;
-	pa = new float[nm];
+//	nm=this->nparam[numscen-1];if(nm<nstat) nm=nstat;
+//	pa = new float[nm];
 	for (int i=0;i<this->nparam[numscen-1];i++) this->fifo.read((char*)&(param[i]),sizeof(float));
-	for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(pa[i]),sizeof(float));
-	delete []pa;
+	for (int i=0;i<this->nstat;i++) this->fifo.read((char*)&(pa),sizeof(float));
+//	delete []pa;
 	return numscen;
 }
 
@@ -251,17 +249,11 @@ int ReftableC::openfile2() {
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
 	//cout <<"dans openfile2 nrec = "<<nrec<<"\n";
-	if (nrecscen != NULL) {
-		delete [] nrecscen;
-		nrecscen = NULL;
-	}
-	this->nrecscen = new int[this->nscen];
+	if (not nrecscen.empty()) nrecscen.clear();
+	this->nrecscen = vector <int>(this->nscen);
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
-	if (nparam != NULL) {
-		delete [] nparam;
-		nparam = NULL;
-	}
-	this->nparam = new int[nscen];
+	if (not this->nparam.empty()) this->nparam.clear();
+	this->nparam = vector <int>(nscen);
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
 	this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
@@ -278,17 +270,11 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	cout <<"nrec = "<<this->nrec<<"\n";
 	if (this->nrec<1) {this->fifo.close();cout<<"fichier reftable.bin vide\n\n";return 1;}
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
-	if (this->nrecscen != NULL) {
-		delete [] nrecscen;
-		nrecscen = NULL;
-	}
-	this->nrecscen = new int[this->nscen];
+	if (not this->nrecscen.empty()) nrecscen.clear();
+	this->nrecscen = vector <int>(this->nscen);
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
-	if (this->nparam != NULL) {
-		delete [] nparam;
-		nparam = NULL;
-	}
-	this->nparam = new int[this->nscen];
+	if (not this->nparam.empty()) this->nparam.clear();
+	this->nparam = vector <int>(nscen);
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
 
@@ -310,18 +296,13 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		}
 	}
 	cout<<"\n";
-	if (nrecscen != NULL) {
-	delete [] this->nrecscen; nrecscen = NULL;
-	}
-	if (nparam != NULL) {
-		delete [] this->nparam;
-		this->nparam = NULL;
-	}
+	if (not nrecscen.empty()) this->nrecscen.clear();
+	if (not this->nparam.empty()) this->nparam.clear();
 	if (not corrompu) {this->fifo.close();cout<<"fichier reftable OK\n\n";return 0;}
 	enregC e;
 	npmax=0;for (int i=0;i<this->nscen;i++) if(npmax<this->nparam[i]) npmax=this->nparam[i];
-	e.param=new float[npmax];
-	e.stat =new float[this->nstat];
+	e.param=vector <float>(npmax);
+	e.stat =vector <float>(this->nstat);
 	int nb;
 	if (k>0) this->nrec=npart*(k/npart);
 	cout<<"\n\nfichier corrompu à partir de l'enregistrement "<<k<<"\n";
@@ -330,11 +311,8 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 	this->fifo.read((char*)&(k),sizeof(int));
 	this->fifo.read((char*)&(this->nscen),sizeof(int));
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nrecscen[i]),sizeof(int));/*cout<<"nrecscen["<<i<<"] = "<<this->nrecscen[i]<<"\n";*/}
-	if (nparam != NULL) {
-		delete [] nparam;
-		nparam = NULL;
-	}
-	this->nparam = new int[this->nscen];
+	if (not this->nparam.empty()) this->nparam.clear();
+	this->nparam = vector <int>(nscen);
 	for (int i=0;i<this->nscen;i++) {this->fifo.read((char*)&(this->nparam[i]),sizeof(int));/*cout<<"nparam["<<i<<"] = "<<this->nparam[i]<<"\n";*/}
 	this->fifo.read((char*)&(this->nstat),sizeof(int));//cout<<"nstat = "<<this->nstat<<"\n";
 	this->filename0 = reftablefilename;
@@ -361,11 +339,9 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 		for (int i=0;i<this->nstat;i++) f1.write((char*)&(e.stat[i]),sizeof(float));
 		if ((((h+1)%npart)==0)or(h==this->nrec-1)) cout<<h+1<<"\r";
 	}
-	if (this->nparam != NULL) {
-		delete [] this->nparam; this->nparam = NULL;
-	}
-	delete [] e.param;
-	delete [] e.stat;
+	if (not this->nparam.empty()) this->nparam.clear();
+	e.param.clear();
+	e.stat.clear();
 	f1.close();
 	this->fifo.close();
 	remove(reftablefilename.c_str());
@@ -405,23 +381,25 @@ void ReftableC::bintotxt() {
 	}
 	fprintf(f1,"%d summary statistics\n",this->nstat);printf("%d summary statistics\n",this->nstat);
 	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
-	enr.param = new float[npm];
-	enr.stat = new float[this->nstat];
+	enr.param = vector <float>(npm);
+	enr.stat = vector <float>(this->nstat);
 	while (not fifo.eof()) {
 		bidon=this->readrecord(&enr);
-		fprintf(f1,"%3d    ",enr.numscen);printf("%3d    ",enr.numscen);
+		fprintf(f1,"%3d    ",enr.numscen);//printf("%3d    ",enr.numscen);
 		for (int i=0;i<this->nparam[enr.numscen-1];i++) {
-			printf(" %12.4f",enr.param[i]);
-			if (enr.param[i]<1) fprintf(f1,"  %6.4f  ",enr.param[i]);
-			else fprintf(f1," %8.0f ",enr.param[i]);
+			//printf(" %12.4f",enr.param[i]);
+			//if (enr.param[i]<1) fprintf(f1,"  %6.4e  ",enr.param[i]);
+			//else fprintf(f1," %8.0f ",enr.param[i]);
+			fprintf(f1,"  %e  ",enr.param[i]);
 		}
 		fprintf(f1,"    ");
-		for (int i=0;i<this->nstat;i++) fprintf(f1," %10.4f",enr.stat[i]);
+		//for (int i=0;i<this->nstat;i++) fprintf(f1," %10.4f",enr.stat[i]);
+		for (int i=0;i<this->nstat;i++) fprintf(f1," %12.12e",enr.stat[i]);
 		fprintf(f1,"\n");
 	}
 	this->closefile();
-	delete [] enr.param;
-	delete [] enr.stat;
+	enr.param.clear();
+	enr.stat.clear();
 }
 
 void ReftableC::bintotxt2() {
@@ -448,8 +426,8 @@ void ReftableC::bintotxt2() {
 	}
 	fprintf(f1,"%d summary statistics\n",this->nstat);printf("%d summary statistics\n",this->nstat);
 	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
-	enr.param = new float[npm];
-	enr.stat = new float[this->nstat];
+	enr.param = vector <float>(npm);
+	enr.stat = vector <float>(this->nstat);
 	while (not fifo.eof()) {
 		bidon=this->readrecord(&enr);
 		fprintf(f1,"%3d    ",enr.numscen);printf("%3d    ",enr.numscen);
@@ -463,8 +441,8 @@ void ReftableC::bintotxt2() {
 		fprintf(f1,"\n");
 	}
 	this->closefile();
-	delete [] enr.param;
-	delete [] enr.stat;
+	enr.param.clear();
+	enr.stat.clear();
 }
 
 void ReftableC::bintocsv(HeaderC const & header) {
@@ -483,8 +461,8 @@ void ReftableC::bintocsv(HeaderC const & header) {
 		else f1<<"\n";
 	}
 	npm=0;for (int i=0;i<this->nscen;i++) if (npm<this->nparam[i]) npm=this->nparam[i];
-	enr.param = new float[npm];
-	enr.stat = new float[header.nstat];
+	enr.param = vector <float>(npm);
+	enr.stat = vector <float>(this->nstat);
 	for (int j=0;j<this->nrec;j++) {
 		bidon=this->readrecord(&enr);
 		f2<<enr.numscen<<"\n";
@@ -497,8 +475,8 @@ void ReftableC::bintocsv(HeaderC const & header) {
 	f1.close();
 	f2.close();
 	this->closefile();
-	delete [] enr.param;
-	delete [] enr.stat;
+	enr.param.clear();
+	enr.stat.clear();
 }
 
 void ReftableC::concat() {
@@ -599,9 +577,9 @@ int ReftableC::cal_varstat() {
 	max = new long double[this->nstat];
 	var_stat = new long double[this->nstat];
 	for (int j=0;j<this->nstat;j++) {sx[j]=0.0;sx2[j]=0.0;min[j]=10.0;max[j]=-10.0;}
-	enr.stat = new float[this->nstat];
+	enr.stat = vector <float>(this->nstat);
 	this->nparamax = 0;for (int i=0;i<this->nscen;i++) if (this->nparam[i]>this->nparamax) this->nparamax=this->nparam[i];
-	enr.param = new float[this->nparamax];
+	enr.param = vector <float>(this->nparamax);
 	this->openfile2();
 	i=0;
 	while (i<nrecutil) {
@@ -653,8 +631,8 @@ void ReftableC::alloue_enrsel(int nsel) {
 	//cout<<"alloue_enrsel nsel="<<nsel<<"   nparamax="<<nparamax<<"\n";fflush(stdout);
 	this->enrsel = new enregC[2*nsel];
 	for (int i=0;i<2*nsel;i++) {
-		this->enrsel[i].param = new float[nparamax];
-		this->enrsel[i].stat  = new float[this->nstat];
+		this->enrsel[i].param = vector <float>(nparamax);
+		this->enrsel[i].stat  = vector <float>(this->nstat);
 	}
 }
 
@@ -663,8 +641,8 @@ void ReftableC::alloue_enrsel(int nsel) {
  */
 void ReftableC::desalloue_enrsel(int nsel) {
 	for (int i=0;i<2*nsel;i++) {
-		delete []this->enrsel[i].param;
-		delete []this->enrsel[i].stat;
+		this->enrsel[i].param.clear();
+		this->enrsel[i].stat.clear();
 	}
 	delete []this->enrsel;
 	this->enrsel = NULL;
@@ -690,7 +668,7 @@ void ReftableC::cal_dist(int nrec, int nsel, float *stat_obs, bool scenarioteste
 	//for (int j=0;j<this->nstat;j++) cout<<"stat_obs["<<j<<"]="<<stat_obs[j]<<"\n";
 	//cout<<"avant openfile2() nrec="<<nrec<<"   nsel="<<nsel<<"\n";
 	this->openfile2();
-	//cout<<"apres openfile2()  firsloop="<<firstloop<<"   nn="<<nn<<"\n";
+	cout<<"apres openfile2()  firsloop="<<firstloop<<"   nn="<<nn<<"\n";
 	while ((this->nreclus<nrec)and(not fifo.eof())) {
 		if (firstloop) {nrecOK=0;firstloop=false;}
 		else nrecOK=nn;

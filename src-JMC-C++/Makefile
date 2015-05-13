@@ -1,8 +1,8 @@
 CFLAGS = -fopenmp $(opti) $(debug)  #-Wall -Wextra
 LIBS = -L. -ldcmt $(staticgcc)  #-lstdc++ -lgomp -lm -lc
-CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp estimparam.cpp header.cpp matrices.cpp mesutils.cpp modchec.cpp particleset.cpp particuleC.cpp randomgenerator.cpp reftable.cpp simfile.cpp testgen.cpp  
+CPPFILES = general.cpp acploc.cpp bias.cpp comparscen.cpp conf.cpp data.cpp estimparam.cpp header.cpp matrices.cpp mesutils.cpp modchec.cpp particleset.cpp particuleC.cpp randforest.cpp randomgenerator.cpp reftable.cpp simfile.cpp testgen.cpp  
 HFILES = global.h particuleC.h history.h header.h 
-OBJS = acploc.o bias.o comparscen.o conf.o data.o estimparam.o general.o header.o history.o matrices.o mesutils.o particleset.o particuleC.o randomgenerator.o reftable.o simfile.o sumstat.o modchec.o  
+OBJS = acploc.o bias.o comparscen.o conf.o data.o estimparam.o general.o header.o history.o matrices.o mesutils.o particleset.o particuleC.o randforest.o randomgenerator.o reftable.o simfile.o sumstat.o modchec.o  
 CC = g++$(CCVERSION)
 #CC = /opt/local/bin/g++-mp-4.6
 
@@ -53,6 +53,9 @@ particleset.o: particleset.cpp particleset.h
 	
 particuleC.o: particuleC.cpp particuleC.h
 	$(CC) $(CFLAGS) -o particuleC.o -c particuleC.cpp
+
+randforest.o: randforest.cpp randforest.h
+	$(CC) $(CFLAGS) -o randforest.o -c randforest.cpp
 
 randomgenerator.o: randomgenerator.cpp randomgenerator.h
 	$(CC) $(CFLAGS) -o randomgenerator.o -c randomgenerator.cpp
