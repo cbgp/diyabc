@@ -145,13 +145,22 @@ class LocusGroupList(list):
             super(LocusList,self).append(value)
         else :
             raise ValueError , "This is not a locus group"
+class DataAbstract(object):
+    def __init__(self):
+        pass
+    def _parseCommentWords(self,words):
+        for word in words :
+            if len(word) > 3 and word[0] == '<' and "=" in word and word[-1] == '>' :
+                valName, val = word.split("=")
+                self.commentValuesDict[valName[1:].lower()] = val[:-1].lower()
 
-class Data(object):
+class Data(DataAbstract):
     ''' this class describes an extended genepop format data set and read it from file'''
     __LOCUS_TYPES = ["A", "H", "Y", "X", "M"]
     __ACCEPTED_CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-<>[], \t.'
     __SEQUENCE_CODE = "ATGCN-atgcn"
     def __init__(self,filename):
+        super(Data, self).__init__()
         self.filename         = filename  # name of the genepop data file (string)
         self.fsCoding         = getFsEncoding(logLevel=False)
         self.message          = None  # message about the content of the data file if reading is successful or error message if not  (string)
@@ -173,6 +182,7 @@ class Data(object):
         self.missdat          = []    # list of missing data in microsatellite loci (list of Missingdata)
         self.missnuc          = []    # list of missing nucleotide in sequence loci (list of MissingNucleotide)
         self.sexratio         = 0.5   # NM/(NF+NM)
+        self.commentValuesDict = {} #'nm'  : "1.0nf"}
 
     def __locus_type_and_ploidy(self,lines,iloc):
         for i,line in enumerate(lines):
@@ -349,10 +359,24 @@ class Data(object):
             raise IOError , "Error when attempting to read data file %s : %s" % (self.filename)
         read_data = f.read().strip()
         f.close()
+
         p = re.compile("^\\s*POP\\s*$", re.MULTILINE|re.IGNORECASE)
         parts = p.split(read_data)#, re.MULTILINE)
         del read_data
         dataDefLine = parts[0].splitlines()[0]
+        self._parseCommentWords(dataDefLine.split(' '))
+        #test NM values
+        errorStrNMformat = "NM value bad format :\n NM type format is like : <(NM keyword)=(float number)(NF keyword)>  with no spaces\nNM must be > or = to NF\nFor example :\n   <NM=1.0NF> (for equal sex ratio)\n   <NM=0.3NF>\n   <NM=4NF>\n"
+        if not self.commentValuesDict.has_key('nm') :
+            raise Exception("Please specify sex ratio in the headline\n\n"+errorStrNMformat)
+        if self.commentValuesDict['nm'][-2:] != "nf" :
+                raise Exception("Can not find NF keyword\n\n"+errorStrNMformat)
+        try :
+            if float(self.commentValuesDict['nm'][:-2]) < 0 :
+                raise Exception("Foun\n\n"+errorStrNMformat)
+        except ValueError:
+            raise Exception("Can not detect a float before NF keyword\n\n"+errorStrNMformat)
+
         lociDefLines = parts[0].splitlines()[1:]
         popsLinesPart = [ popPart.splitlines() for popPart in parts[1:]]
 
@@ -651,11 +675,12 @@ class Data(object):
             if loc.type>4 :  self.__dosequence(loc,iloc)
         self.nloc = self.nloc_seq + self.nloc_mic
 
-class DataSnp():
+class DataSnp(DataAbstract):
     __LOCUS_TYPES = set(['A','X','Y','M','H','a','x','y','m','h'])
     __LOCUS_VALUES = set(['0','1','2','9'])
     __IND_SEX_TYPES = set(['9','M','F','m','f'])
     def __init__(self,filename):
+        super(DataSnp, self).__init__()
         self.filename = filename
         self.fsCoding = getFsEncoding(logLevel=False)
         self.nloc = 0
@@ -687,13 +712,12 @@ class DataSnp():
         data = f.read().strip()
         f.close()
         datalines = data.split('\n')
-
         l1 = datalines[0].strip()
         l1compressed = pat.sub(' ',l1)
         l1parts = l1compressed.split(' ')
         prem = 0
         if not (len(l1parts) > 3 and l1parts[0] == "IND" and (l1parts[1].lower() == "sex") and l1parts[2] == "POP"):
-            self.__parseCommentWords(l1parts)
+            self._parseCommentWords(l1parts)
             l1 = datalines[1].strip()
             l1compressed = pat.sub(' ',l1)
             l1parts = l1compressed.split(' ')
@@ -705,16 +729,18 @@ class DataSnp():
 
 
         #test NM values
-        errorStrNMformat = "NM value bad format :\n NM type format is like : <(NM keyword)=(float number)(NF keyword)>  with no spaces\nNM must be > or = to NF\nFor example :\n   <NM=1.0NF> (for equal sex ratio)\n   <NM=0.3NF>\n"
+        errorStrNMformat = "NM value bad format :\n NM type format is like : <(NM keyword)=(float number)(NF keyword)>  with no spaces\nNM must be > or = to NF\nFor example :\n   <NM=1.0NF> (for equal sex ratio)\n   <NM=0.3NF>\n   <NM=4NF>\n"
         if not self.commentValuesDict.has_key('nm') :
             raise Exception("Please specify sex ratio in the headline\n\n"+errorStrNMformat)
         if self.commentValuesDict['nm'][-2:] != "nf" :
                 raise Exception("Can not find NF keyword\n\n"+errorStrNMformat)
         try :
-            if float(self.commentValuesDict['nm'][:-2]) > 1 :
+            if float(self.commentValuesDict['nm'][:-2]) < 0 :
                 raise Exception("Foun\n\n"+errorStrNMformat)
         except ValueError:
             raise Exception("Can not detect a float before NF keyword\n\n"+errorStrNMformat)
+
+
         for idx, locty in enumerate(l1parts):
             if idx > 2 :
                 if locty not in DataSnp.__LOCUS_TYPES :
@@ -876,14 +902,6 @@ class DataSnp():
         self.nloc = nbLociPoly
         self.nloctot = nbLoci
         self.nsample = nbSample
-
-
-
-    def __parseCommentWords(self,words):
-        for word in words :
-            if word[0] == '<' and "=" in word and word[-1] == '>' :
-                valName, val = word.split("=")
-                self.commentValuesDict[valName[1:].lower()] = val[:-1].lower()
 
 
 def isSNPDatafile(name):
