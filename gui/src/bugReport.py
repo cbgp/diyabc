@@ -50,7 +50,7 @@ class BugReport(formBugReport,baseBugReport):
 
 
     def generateBugReport(self):
-        current_project = self.parent.ui.tabWidget.currentWidget()
+        current_project = str(self.parent.ui.tabWidget.currentWidget())
         fsCoding = getFsEncoding(logLevel=False)
         fileDial = QFileDialog(self,"Select location of the bug report","%s"%os.path.dirname(str(current_project.dir)))
         fileDial.setAcceptMode(QFileDialog.AcceptSave)
@@ -86,7 +86,7 @@ class BugReport(formBugReport,baseBugReport):
 
         # copie du datafile
         if self.ui.dataYesRadio.isChecked():
-            if os.path.exists(current_project.dataFileSource.encode(fsCoding)):
+            if os.path.exists(str(current_project.dataFileSource).encode(fsCoding)):
                 dataFileName = os.path.basename(current_project.dataFileSource)
                 tar.add(current_project.dataFileSource.encode(fsCoding),u'%s/%s'%(repIntoTar,dataFileName))
 
