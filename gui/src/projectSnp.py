@@ -292,6 +292,8 @@ class ProjectSnp(ProjectReftable):
         ## conversion de dos à unix
         #if not isUnixText(name):
         #    dos2unix(name)
+        buttonPreviousText = self.runReftableButton.text()
+        self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
         try:
             self.data = DataSnp(name)
             typestr = ""
@@ -316,6 +318,7 @@ class ProjectSnp(ProjectReftable):
             if self.ui.dataFileEdit.text() != "":
                 keep = "\n\nThe file was not loaded, nothing was changed"
             output.notify(self,"Data file error","%s%s"%(e,keep))
+            self.runReftableButton.setText(buttonPreviousText)
             return False
 
 
@@ -333,7 +336,7 @@ class ProjectSnp(ProjectReftable):
         #        self.typeCombo.addItem(ty)
         #self.ui.horizontalLayout_6.addWidget(QLabel("for locus type :"))
         #self.ui.horizontalLayout_6.addWidget(self.typeCombo)
-
+        self.runReftableButton.setText(buttonPreviousText)
         return True
 
     def clearSummaryStats(self):
