@@ -681,7 +681,7 @@ class DataSnp(DataAbstract):
     __IND_SEX_TYPES = set(['9','M','F','m','f'])
     def __init__(self,filename):
         super(DataSnp, self).__init__()
-        self.filename = filename
+        self.filename = str(filename)
         self.fsCoding = getFsEncoding(logLevel=False)
         self.nloc = 0
         self.nloctot = 0
@@ -693,16 +693,18 @@ class DataSnp(DataAbstract):
         self.nind_hash = {}
         self.commentValuesDict = {'maf' : 'HUDSON'}
                                   #'nm'  : "1.0nf"}
-        self.__readData()
+        self.__readData(writeMafFile=False)
 
+    def writeMafFile(self):
+        self.__readData(writeMafFile=True)
 
-    def __readData(self):
+    def __readData(self, writeMafFile=False):
         """
         Read SNP data file and infos from it
 
-        code is an ugly mix between ugly legacy code and ugly new code. Enjoy !
+        code is an ugly mix between ugly legacy code and ugly new code. Enjoy ! :-(
         """
-        name = self.filename
+        name = str(self.filename)
         nLocFam = 0
         # list ofsexual  locus index
         sexLocus = []
@@ -846,7 +848,12 @@ class DataSnp(DataAbstract):
                 self.ntypeloc[locus_type[locus]] -= 1
         if nbLociPoly == 0 :
             raise Exception("%s\n\nFound only monomorphic loci !!!"%self.filename)
-
+        # ------- MAF --------------
+        mafLocusAcceptance=[]
+        if writeMafFile :
+            dirfile = os.path.dirname(str(self.filename))
+            mafFile = open("%s/maf.txt"%dirfile, 'w')
+            mafFile.write("<maf=%s>\n" % str(self.commentValuesDict['maf']))
         if str(self.commentValuesDict['maf']).lower() != "hudson" :
             try :
                 float(self.commentValuesDict['maf'])
@@ -855,6 +862,13 @@ class DataSnp(DataAbstract):
             if float(self.commentValuesDict['maf']) <= 0.0 or float(self.commentValuesDict['maf']) > 0.5 :
                 raise Exception("MAF value must be upper to 0 and lower or egual to 0.5 , '%s' given." % self.commentValuesDict['maf'])
             rejectedLocusMAF = {}
+            if writeMafFile :
+                for locus in locus_type.keys() :
+                    mafFile.write(str(locus) + " ")
+                mafFile.write("\n")
+                for locus in locus_type.keys() :
+                    mafFile.write(locus_type[locus] + " ")
+                mafFile.write("\n")
             for locus in locus_type.keys() :
                 n0 = 0
                 n2 = 0
@@ -886,17 +900,30 @@ class DataSnp(DataAbstract):
                         fam = float(n0)/float(n0+n2)
                     else :
                         fam = float(n2)/float(n0+n2)
+                    if writeMafFile :
+                        mafFile.write(str(fam) + " ")
                     if fam >= float(self.commentValuesDict['maf']) :
                         nLocFam +=1
+                        if writeMafFile :
+                            mafLocusAcceptance.append('1')
                     else :
                         #locus rejected
                         rejectedLocusMAF[locus] = fam
                         self.ntypeloc[locus_type[locus]] = self.ntypeloc[locus_type[locus]] - 1
+                        if writeMafFile :
+                            mafLocusAcceptance.append('0')
+                else :
+                    if writeMafFile :
+                        mafFile.write(str(-1) + " ")
+                        mafLocusAcceptance.append('1')
+            if writeMafFile :
+                mafFile.write("\n" + " ".join(mafLocusAcceptance))
             rejectedLocusText = "Those locuses have been rejected because there MAF are below the limit (%s) :\n%s\n"%\
                                 (self.commentValuesDict['maf'],",".join([str(x) for x in sorted(rejectedLocusMAF.keys())]))
             log(1,rejectedLocusText)
             nbLociPoly = nLocFam
-
+        if writeMafFile :
+            mafFile.close()
         nbSample = len(types)
         self.nindtot = nbInd
         self.nloc = nbLociPoly
