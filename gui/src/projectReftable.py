@@ -423,6 +423,14 @@ class ProjectReftable(Project):
         if nb_to_gen < int(self.ui.nbSetsDoneEdit.text()):
             output.notify(self,"value error","Please ask for more records than it already exists")
             return
+        if int(self.ui.nbSetsDoneEdit.text() )< 1 :
+               if os.path.exists() :
+                   pass
+               #effacer le data.bin
+               #effacer le data.bin.txt
+        else :
+            pass
+            # lire le fichier maf et s'assurer que la maf de data file correspond
         modLoop = (nb_to_gen-int(self.ui.nbSetsDoneEdit.text()))%int(particleLoopSize)
         if modLoop != 0 :
             warning = "Your loop size being %s you will obtain a total of %s simulated datasets." \
