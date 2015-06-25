@@ -74,10 +74,13 @@ public:
 resdata *resprior,*respost;
 
 int nrecc;
+
+bool doAFD;
+
 /**
  * Ecriture de l'entete du fichier confidence.txt contenant les résultats
  */
-	void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, bool AFD, int nsel0) {
+	void ecrientete(int nrec, int ntest,int nseld, int nselr,int nlogreg,string shist,string smut, int nsel0) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -109,7 +112,7 @@ int nrecc;
         if (smut != "") f1<<"Mutation parameters are drawn from the following priors and/or are given the following values : "<<smut<<"\n";
         f1<<"Candidate scenarios : ";
         for (int i=0;i<rt.nscenchoisi;i++) {f1<<rt.scenchoisi[i];if (i<rt.nscenchoisi-1) f1<<", "; else f1<<"\n";}
-        if (AFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else 
+        if (doAFD) f1<<"Summary statistics have been replaced by components of a Linear Discriminant Analysis\n\n"; else 
 			f1<<"Results obtained with plain summary statistics\n\n";
         //f1<<"         ");
 		if (ntest>0){
@@ -136,7 +139,7 @@ int nrecc;
  * Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
  * sur les axes discriminants
  */
-    float* transfAFD(int nrec,int nsel, int p) {
+    float* transfAFD(int nsel, int p) {
         long double delta,rdelta,*w,a,**X,*statpiv;
 		float *sp;
         int *scenar;
@@ -189,7 +192,7 @@ int nrecc;
  * Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
  * sur les axes discriminants
  */
-    float* transfAFD2(int nrec,int nsel, float* stat_obs) {
+    float* transfAFD2(int nsel, float* stat_obs) {
         long double delta,rdelta,*w,a,**X,*statpiv;
 		float *sp;
         int *scenar;
@@ -257,7 +260,7 @@ int nrecc;
 			if (prior) resprior[p].truescen=enreg[p].numscen;else respost[p].truescen=enreg[p].numscen; 
 			rt.cal_dist(nrec,nsel,stat_obs,false,true);
 			iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-			if (AFD) stat_obs = transfAFD(nrec,nsel,p);
+			if (doAFD) stat_obs = transfAFD(nsel,p);
 			postsd = comp_direct(nseld);
 			ncs1=ncs-1;
 			int s=0;for (int i=1;i<rt.nscen;i++) {if (postsd[ncs1][i].x>postsd[ncs1][s].x) s=i;}
@@ -285,11 +288,11 @@ int nrecc;
 	}
  
 	void pperror(bool prior, int nrec, int nrecp, int nsel0, int nseld, int nselr, int nlogreg, int seed,double *prop) {
-		int nstatOK,ncdir,nclog,ns,nsel,*num;
-		long double **matC,**phistar;
+		int nstatOK,ns,*num;
+		//long double **phistar;
 		double **stat;
 		enreg = new enregC[nrecp];
-		nstatOK = rt.cal_varstat();
+		nstatOK = rt.cal_varstat(); cout<<"nstatOK="<<nstatOK<<"\n";
 		int nphistarOK;
 		MwcGen mw;
 		if (prior) {
@@ -334,14 +337,10 @@ int nrecc;
 			cout<<"avant le traitenreg\n";
 			traitenreg("prior",nrec,nseld,nselr,nrecp,nlogreg,prop);
 		} else {
-			cout<<"debut du calcul de la posterior predictive error\n";
 			rt.alloue_enrsel(nsel0);
-			cout<<"1\n";
 			rt.cal_dist(nrec,nsel0,&header.stat_obs[0],false,true);
-			cout<<"2\n";
 			num = new int[nrecp];
 			for (int i=0;i<nrecp;i++) num[i]=mw.rand0(nsel0);
-			cout<<"3\n";
 			for (int p=0;p<nrecp;p++) {
 				enreg[p].stat = vector <float>(rt.nstat);
 				enreg[p].param = vector <float>(rt.nparamax);
@@ -349,7 +348,6 @@ int nrecc;
 				for (int j=0;j<rt.nparam[enreg[p].numscen-1];j++) enreg[p].param[j] = rt.enrsel[num[p]].param[j];
 				for (int j=0;j<rt.nstat;j++) enreg[p].stat[j] = rt.enrsel[num[p]].stat[j];
 			}
-			cout<<"apres tirage dans leposterior\n";
 			for (int iscen=0;iscen<rt.nscen;iscen++) {
 				nphistarOK=0;
 				for (int p=0;p<nrecp;p++) if (enreg[p].numscen-1==iscen) nphistarOK++;
@@ -398,14 +396,15 @@ int nrecc;
  */
     void doconf(string opt, int seed) {
         int nstatOK,ncs1,*nbestdir,*nbestlog,*scenchoibackup,nscenchoibackup;
-        int nrec = 0,nreca, nsel=0,nsel0=0,nseld = 0,nselr = 0,ns,nr, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond,nrecb;
-		int ncordir,ncorlog,ncdir,nclog,ii,jj;
+        int nrec = 0,nreca, nsel=0,nsel0=0,nseld = 0,nselr = 0,ns, nrecpos = 0,ntest = 0, np,ng,npv, nlogreg = 0, ncond,nrecb;
+		//int ncordir,ncorlog,ncdir,nclog,ii,jj;
         string s,s0,s1;
         vector<string> ss, ss1;
 		float *stat_obs;
 		long double **matC;
-		double duree,debut,clock_zero,**stat,prop[2],propcordirprior,propcorlogprior,propcordirposterior,propcorlogposterior;
-        bool AFD=false,posterior=false;
+		double duree,debut,clock_zero,prop[2],propcordirprior,propcorlogprior,propcordirposterior,propcorlogposterior;
+        doAFD=false;
+        bool posterior=false;
 		long double **phistar;
 		int nphistarOK;
         posteriorscenC **postsd,*postsr;
@@ -492,8 +491,8 @@ int nrecc;
                 for (int j=1;j<ng+1;j++) resetmutparam(ss1[j-1]);
                 //cout<<"apres resetmutparam\n";
             } else if (s0=="f:") {
-                AFD=(s1=="1");
-                if (AFD) cout<<"Factorial Discriminant Analysis\n";
+                doAFD=(s1=="1");
+                if (doAFD) cout<<"Factorial Discriminant Analysis\n";
             } else if (s0=="po") {
 				cout<<"paramètres tirés dans les posteriors\n";
 				posterior=true;
@@ -575,7 +574,7 @@ int nrecc;
 			cout<<"---------------------------------------------------------------\n";
 		}
 //FIN du calcul de la posterior predictive error
-		ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,AFD,nsel0); //cout<<"apres ecrientete\n";
+		ecrientete(nrec,ntest,nseld,nselr,nlogreg,shist,smut,nsel0); //cout<<"apres ecrientete\n";
 		ofstream f11(nomficonfresult.c_str(),ios::app);
 		if (ntest>0) {
 			cout<<ntest<<" test data sets\n";
@@ -587,7 +586,7 @@ int nrecc;
 				for (int j=0;j<nscenchoibackup;j++) scenchoibackup[j]=rt.scenchoisi[j]; 
 				rt.nscenchoisi=1;rt.scenchoisi = new int[rt.nscenchoisi];rt.scenchoisi[0]=rt.scenteste;
 				cout<<"rt.nrec="<<rt.nrec<<"\n";
-				nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+				nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat  nstatOK="<<nstatOK<<"\n";
 				cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 				rt.alloue_enrsel(nsel);
 				cout<<"avant le cal_dist de posterior\n";fflush(stdout);
@@ -650,7 +649,7 @@ int nrecc;
 			rt.alloue_enrsel(nsel);
 			if (nlogreg==1) allouecmat(rt.nscenchoisi, nselr, rt.nstat);
 			nbestdir = new int[rt.nscenchoisi];nbestlog = new int[rt.nscenchoisi];
-        vector<int> nbestlog(rt.nscenchoisi);
+        	//vector<int> nbestlog(rt.nscenchoisi);
 			for(int s=0;s<rt.nscenchoisi;s++){nbestdir[s]=0;nbestlog[s]=0;}
 			nstatOK = rt.cal_varstat();
 			for (int p=0;p<ntest;p++) {
@@ -662,7 +661,7 @@ int nrecc;
 				//cout<<"apres cal_dist\n";
 				iprog +=6;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
 				//cout<<"avant transfAFD\n";
-				if (AFD) stat_obs = transfAFD(nrec,nsel,p);
+				if (doAFD) stat_obs = transfAFD(nsel,p);
 				//if (ite==1) stat_obs = transfAFD(nrec,nsel,p);
 				//cout<<"avant postsd\n";
 				postsd = comp_direct(nseld);

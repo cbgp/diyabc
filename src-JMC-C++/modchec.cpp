@@ -65,13 +65,13 @@ long double **ssphistar,**ssref;
     bool resetstats(string s) {
 		cout<<"debut de resetstats\n";
 		cout<<s<<"\n";
-        int j,ns,nq,nss1,gr,lonentstat,*groupmodif,ngroupmodif,*nustat;
+        int j,ns,nq,gr,lonentstat,*groupmodif,ngroupmodif,*nustat;
         vector<string> ss, qq, ss1;
 		vector < vector <StatsnpC > > statsnp;
 		vector < vector <string > > statname;
 		StatsnpC stsnp;
 		bool trouve;
-		int nss,catsnp,gg,gs,gt;
+		int catsnp,gg,gs,gt;
 		statsnp.resize(header.ngroupes+1);
 		for(gr=0;gr<=header.ngroupes;gr++) statsnp[gr].resize(0);
 //recopiage des anciennes stat
@@ -182,13 +182,13 @@ long double **ssphistar,**ssref;
                       nustat[gr]++;
                 } else if (stat_num[j]<12) {
                       groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                      splitwords(qq[2],"&",ss1); nss1 = ss1.size();
+                      splitwords(qq[2],"&",ss1);
                       groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                       groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                       nustat[gr]++;
                 } else if (stat_num[j]==12) {
                       groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                      splitwords(qq[2],"&",ss1); nss1 = ss1.size();
+                      splitwords(qq[2],"&",ss1);
                       groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                       groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                       groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
@@ -203,13 +203,13 @@ long double **ssphistar,**ssref;
                       nustat[gr]++;
                 } else if (stat_num[j]>-14) {
                         groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        splitwords(qq[2],"&", ss1); nss1 = ss1.size();
+                        splitwords(qq[2],"&", ss1);
                         groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         nustat[gr]++;
                 } else if (stat_num[j]==-14) {
                         groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
+                        splitwords(qq[2],"&",ss1);
                         groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
@@ -243,7 +243,7 @@ long double **ssphistar,**ssref;
                         
                     } else if ((stat_num[j]>24)and(stat_num[j]<33)) {
 						groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
+                        splitwords(qq[2],"&",ss1);
                         groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
 						trouve=false;
@@ -270,7 +270,7 @@ long double **ssphistar,**ssref;
                         
                     } else if (stat_num[j]>32) {
 						groupe[gr].sumstat[nustat[gr]].cat=stat_num[j];
-                        splitwords(qq[2],"&",ss1); nss1 = ss1.size();
+                        splitwords(qq[2],"&",ss1);
                         groupe[gr].sumstat[nustat[gr]].samp=atoi(ss1[0].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp1=atoi(ss1[1].c_str());
                         groupe[gr].sumstat[nustat[gr]].samp2=atoi(ss1[2].c_str());
@@ -327,7 +327,6 @@ long double **ssphistar,**ssref;
     }
 
     int detphistarOK(int nsel, long double **phistar) {
-		char c;
         bool OK;
         int npv,ip1,ip2,nphistarOK=0,scen=rt.scenteste-1,k1;
         npv = rt.nparam[scen];
@@ -393,7 +392,7 @@ long double **ssphistar,**ssref;
         return nphistarOK;
     }
 
-    void call_loc(int npart,int nstat, int nrec,int nsel,long double **ss, vector <float> stat_obs) {
+    void call_loc(int npart, int nrec,int nsel,long double **ss, float *stat_obs) {
         int *avant,*apres,*egal;
         long double *qobs;
 		float diff;
@@ -459,7 +458,7 @@ long double **ssphistar,**ssref;
 
     }
 
-    void call_acp(int nr, int ns, int nstat, int *numscen,long double **ssref, long double **ssphistar, vector <float> stat_obs) {
+    void call_acp(int nr, int ns, int nstat, int *numscen,long double **ssref, long double **ssphistar, float *stat_obs) {
         resACPC rACP;
         long double *pca_statobs,**pca_ss;
         pca_statobs = new long double[nstat];
@@ -566,7 +565,7 @@ long double **ssphistar,**ssref;
         nprog=newsspart+100;
         if ((newstat)and(dopca)) nprog += scenario.size()*10000;
         iprog=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat   nstatOK="<<nstatOK<<"\n";
         //header.calstatobs(statobsfilename);
 		//stat_obs = header.stat_obs;  cout<<"apres read_statobs\n";
         cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
@@ -587,6 +586,8 @@ long double **ssphistar,**ssref;
 		for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
         if (not deltanul) calphistarO(nsel,phistar);else copyphistar(nsel,nparamcom,phistar); cout<<"apres calphistar\n";
         det_nomparam();
+        phistarcompo = new long double*[nsel];phistarscaled = new long double*[nsel];
+        for (int i=0;i<nsel;i++) {phistarcompo[i] = new long double[0];phistarscaled[i] = new long double[0];}
 		savephistar(nsel,path,ident,phistar,phistarcompo,phistarscaled);                     cout<<"apres savephistar\n";
         iprog+=20;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         phistarOK = new long double*[nsel];
@@ -603,7 +604,7 @@ long double **ssphistar,**ssref;
         	exit(1);
         }
         npv = rt.nparam[rt.scenteste-1];
-		npvmax = npv; for (int i=0;i<scenario.size();i++) if (npvmax<rt.nparam[i]) npvmax=rt.nparam[i];
+		npvmax = npv; for (int i=0;i<(int)scenario.size();i++) if (npvmax<rt.nparam[i]) npvmax=rt.nparam[i];
 		cout<<"npv="<<npv<<"    nenr="<<nenr<<"   nstat="<<header.nstat<<"\n";
 		cout<<"npvmax = "<<npvmax<<"\n";
 		//delete []enreg;
@@ -611,7 +612,7 @@ long double **ssphistar,**ssref;
         firsttime=true;
         cout<<"ns="<<ns<<"\n";
         //cout<<phistarOK[0][0]<<"\n";
-        if (newstat) usestats = resetstats(snewstat);
+        if (newstat) usestats = resetstats(snewstat); if (not usestats) cout<<"problème dans la construction des nouvelles stats\n";
         cout<<"header.nstat = "<<header.nstat<<"\n";
         enreg = new enregC[nenr];
 		cout<<"apres new enregC[nenr]\n";
@@ -643,7 +644,7 @@ long double **ssphistar,**ssref;
 			header.calstatobs(statobsfilename);/*stat_obs = header.stat_obs;*/
 			//cout<<"\nAPRES CALSTATOBS\n\n\n";
 		}
-        if (doloc) call_loc(newsspart,header.nstat,nrec,nsel,ssphistar,header.stat_obs);
+        if (doloc) call_loc(newsspart,nrec,nsel,ssphistar,&header.stat_obs[0]);
         if (dopca) {
             if (newstat) {
                 header.readHeader(headerfilename);cout<<"apres readHeader scenario.size()= "<<scenario.size()<<"\n";
@@ -679,13 +680,13 @@ long double **ssphistar,**ssref;
                 for (int i=0;i<newrefpart;i++) ssref[i] = new long double[header.nstat];
                 nsr=0;
                 while (nsr<newrefpart) {
-                    bidon = rt.readrecord(&enr);
+                    bidon = rt.readrecord(&enr); if (bidon!=0) cout<<"probleme à la lecture du reftable\n";
                     numscen[nsr] = enr.numscen;
                     for (int j=0;j<rt.nstat;j++) ssref[nsr][j]=enr.stat[j];
                     nsr++;
                 }
             }
-            call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,header.stat_obs);
+            call_acp(newrefpart,newsspart,header.nstat,numscen,ssref,ssphistar,&header.stat_obs[0]);
         }
         iprog+=10;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }

@@ -213,7 +213,7 @@ try {
 	initstat_typenum();
 	RNG_must_be_saved = false;
     bool firsttime;
-	int k, seed = 0;
+	int k, seed;
 	int optchar;
 	int computer_identity = 0; // should be 0 if diyabc runs on a single computer
     char action='a';
@@ -221,6 +221,8 @@ try {
     string message,soptarg,estpar,comppar,confpar,acplpar,biaspar,modpar, rngpar, randforpar;
 
     debut=walltime(&clock_zero);
+    srand (time(NULL));
+    seed = rand() % 1000;
 	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:R:F:")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
@@ -523,10 +525,11 @@ try {
                               rt.datapath = datafilename;
                               rt.nscen = header.nscenarios;
                               rt.nrec=0;
-                              rt.nrecscen = vector <int>(scenario.size());
-                              for (int i=0;i<scenario.size();i++) rt.nrecscen[i]=0;
-                              rt.nparam = vector <int>(scenario.size());
-                              for (int i=0;i<scenario.size();i++) rt.nparam[i]=scenario[i].nparamvar;
+                              int scenariosize=(int)scenario.size();
+                              rt.nrecscen = vector <int>(scenariosize);
+                              for (int i=0;i<scenariosize;i++) rt.nrecscen[i]=0;
+                              rt.nparam = vector <int>(scenariosize);
+                              for (int i=0;i<scenariosize;i++) rt.nparam[i]=scenario[i].nparamvar;
                               rt.nstat=header.nstat;
 							  cout<<"general avant rt.writeheader\n";
 							  rt.filename=reftablefilename;
@@ -692,7 +695,7 @@ try {
        case 'd'  : k=readheaders();
                   if (k==1) {cout <<"no file reftable.bin in the current directory\n";exit(1);}
                   cout<<"avant doacpl soptarg="<<soptarg<<"\n";
-                  doacpl(acplpar,multithread,seed);
+                  doacpl(acplpar);
                   break;
 
        case 'j'  : k=readheaders();

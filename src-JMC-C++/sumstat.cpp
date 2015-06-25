@@ -83,19 +83,21 @@ extern DataC dataobs;
 			//cout << "\n";
 		}
 	}
-	//cout <<"fin de calfreq \n";exit(1);
+	//cout <<"fin de calfreq \n";//exit(1);
   }
 
 	void ParticleC::calfreqsnp(int gr) {
-		int loc,iloc,cat,sasize;
+		int loc,iloc,sasize;
+		//int cat;
 		short int g0=0;
-		long double h0,h1,h2,m0=0.0,m1=0.0,m2=0.0;
+		//long double h0,h1,h2,m0=0.0,m1=0.0,m2=0.0;
 		//cout << "calfreqsnp début   nloc="<<this->grouplist[gr].nloc<<"\n";
 		for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 			loc=this->grouplist[gr].loc[iloc];
 			//cout<<"locus "<<loc<<"\n";
 			if (this->locuslist[loc].weight>0.0) {
-				cat=this->locuslist[loc].type%5;
+				//cout<<"this->locuslist[loc].type="<<this->locuslist[loc].type<<"\n";
+				//cat=this->locuslist[loc].type%5;
 				//cout<<"cat = "<<cat<<"   nsample="<<this->nsample<<"\n";
 				this->locuslist[loc].freq = vector<vector<long double> >(this->nsample);
 				for (int samp=0;samp<this->nsample;samp++) {
@@ -158,10 +160,9 @@ extern DataC dataobs;
   }
 
   void ParticleC::liberednavar(int gr) {
-	  int kloc,iloc,cat;
+	  int kloc,iloc;
 	  for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
 		  kloc=this->grouplist[gr].loc[iloc];
-		  cat= this->locuslist[kloc].type % 5;
 		  this->locuslist[kloc].haplodnavar.clear();
 		  this->locuslist[kloc].haplodna.clear();
 	  }
@@ -295,7 +296,7 @@ extern DataC dataobs;
 
 	void ParticleC::cal_snaml(int gr,int numsnp) {
 		//cout<<"debut de cal_snaml\n";
-		long double aml,f1,f2,f3,n1,n2,Dcra,U,V,N,M,*rangx,*rangy;
+		long double aml,f1,f2,f3;
 		int iloc,loc;
 		int sample=this->grouplist[gr].sumstatsnp[numsnp].samp-1;
 		int sample1=this->grouplist[gr].sumstatsnp[numsnp].samp1-1;
@@ -958,11 +959,11 @@ extern DataC dataobs;
   }
 
   long double ParticleC::cal_mpd1p(int gr,int st){
-    int iloc,kloc,npdl,nd=0,nl=0;
+    int iloc,kloc,nd=0,nl=0;
     long double npdm=0.0,res=0.0,mpdp;
     int sample=this->grouplist[gr].sumstat[st].samp-1;
     for (iloc=0;iloc<this->grouplist[gr].nloc;iloc++){
-      npdl=0;
+      //npdl=0;
       kloc=this->grouplist[gr].loc[iloc];
       mpdp=this->cal_mpdpl(kloc,sample,&nd);
       if (nd>0){npdm +=mpdp;nl++;}
@@ -1684,7 +1685,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
     else return 0.0;
   }
 
-  long double ParticleC::mQ(int n, int n0, int n1,long double *x) {
+  long double ParticleC::mQ(int n0, int n1,long double *x) {
     long double sx=0;
     for (int i=n0;i<n1;i++) sx +=x[i];
     //cout <<"x["<<n0<<"]="<<x[n0]<<"    x["<<n1-1<<"]="<<x[n1-1]<<"       ";
@@ -1701,7 +1702,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       while(x[m]==0.0) m++;
       nn=n-m;
       //cout<<"ME    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
-      return mQ(n,m+nn/3,m+2*nn/3,x);*/
+      return mQ(m+nn/3,m+2*nn/3,x);*/
     /*if (nn==0) return 0.0;
       if (nn==1) return x[n-1];
       if (nn==2) return 0.5*(x[n-2]+x[n-1]);
@@ -1717,7 +1718,7 @@ long double ParticleC::cal_nha2p(int gr,int st){
       while(x[m]==0.0) m++;
       nn=n-m;
       //cout<<"Q1    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
-      return mQ(n,m,m+nn/3,x);*/
+      return mQ(m,m+nn/3,x);*/
     /*if (nn<4) return 0.0;
       if ((nn % 4)==0) return 0.5*(x[m+(nn/4)]+x[m+(nn/4)-1]);
       else if ((nn % 2)==0) return x[m+(nn/4)];
@@ -1725,11 +1726,11 @@ long double ParticleC::cal_nha2p(int gr,int st){
   }
   long double ParticleC::cal_qu3L(int n, long double *x) {
     int m=0,nn;
-    long double a;
+    //long double a;
     while(x[m]==0.0) m++;
     nn=n-m;
     //cout<<"Q3    n="<<n<<"   n="<<m<<"   nn="<<nn<<"      ";
-    return mQ(n,m+2*nn/3,n,x);
+    return mQ(m+2*nn/3,n,x);
     /*if (nn<4) a=0.0;
       else if ((nn % 4)==0) a=0.5*(x[m+(3*nn/4)]+x[m+(3*nn/4)-1]);
       else if ((nn % 2)==0) a=x[m+(3*nn/4)];
@@ -1758,7 +1759,7 @@ void ParticleC::docalstat(int gr) {
 			}
 		}
 	}
-	int numsnp,kloc;
+	int numsnp;
 	//cout<<"Docalstat groupe "<<gr<<"    nstat="<<this->grouplist[gr].nstat<<"\n";
 	for (int st=0;st<this->grouplist[gr].nstat;st++) {
 /*	

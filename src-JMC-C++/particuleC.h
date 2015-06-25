@@ -29,7 +29,7 @@ class ParticleC
 	  std::vector <ScenarioC> scenario;
 	  std::vector <SequenceBitC> seqlist;
 	  std::vector <GeneTreeC> gt;
-	  std::vector <ConditionC> condition;
+	  //std::vector <ConditionC> condition;
 	  std::vector<int> samplesizeY;
 	  std::vector<int> samplesizeM;
 	  std::vector < std::vector <bool> > afsdone;
@@ -38,7 +38,7 @@ class ParticleC
 	  MwcGen mw;
 	  ScenarioC scen;
 	  bool firstime,dnatrue,drawuntil;
-	  int nloc,ngr,nparam,nseq,nstat,nsample,nscenarios,nconditions;
+	  int nloc,ngr,nparam,nseq,nstat,nsample,nscenarios;//,nconditions;
 	  double sexratio,maf;
 	  double matQ[4][4];
 	  long int naccept,ntentes;
@@ -51,23 +51,27 @@ class ParticleC
 		if (not scenario.empty()) scenario.clear();
 		if (not seqlist.empty()) seqlist.clear();
 		if (not gt.empty()) gt.clear();
-		if (not condition.empty()) condition.clear();
+		//if (not condition.empty()) condition.clear();
 		if (not samplesizeY.empty()) samplesizeY.clear();
 		if (not samplesizeM.empty()) samplesizeM.clear();
 		if (not afsdone.empty()) {
-			for (int i=0;i<afsdone.size();i++) {
+			int imax=(int)afsdone.size();
+			for (int i=0;i<imax;i++) {
 				if (not afsdone[i].empty())	afsdone[i].clear();
 			}
 		}
 		if (not n_afs.empty()) {
-			for (int i=0;i<n_afs.size();i++) {
+		int imax=(int)n_afs.size();
+			for (int i=0;i<imax;i++) {
 				if (not n_afs[i].empty()) n_afs[i].clear();
 			}
 		}
 		if (not t_afs.empty()) {
-			for (int i=0;i<t_afs.size();i++) {
+			int imax=(int)t_afs.size();
+			for (int i=0;i<imax;i++) {
 				if (not t_afs[i].empty()) {
-					for (int j=0;j<t_afs[i].size();j++) t_afs[i][j].clear();
+					int jmax=(int)t_afs[i].size();
+					for (int j=0;j<jmax;j++) t_afs[i][j].clear();
 				}
 			}
 		}
@@ -245,7 +249,7 @@ class ParticleC
    long double cal_aml3p(int gr,int st);
    void cal_numvar(int gr);
    long double cal_p0L(StatsnpC stsnp);
-   long double mQ(int n, int n0, int n1,long double *x);
+   long double mQ(int n0, int n1,long double *x);
    long double cal_medL(int n, long double *x);
    long double cal_qu1L(int n, long double *x);
    long double cal_qu3L(int n, long double *x);

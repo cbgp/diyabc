@@ -104,7 +104,8 @@ public:
 
   // Définition de l'opérateur < pour le tri des événements populationnels (PP)
   friend bool operator< (const EventC & lhs, const EventC & rhs);
-
+	
+	EventC & operator= (EventC const & source);
   // Pour écrire l'événement dans la sortie standard
   void ecris();
 };
@@ -117,6 +118,8 @@ class Ne0C
 public:
   int val;
   std::string name;
+  
+  Ne0C & operator= (Ne0C const & source);
 };
 
 /**
@@ -187,18 +190,16 @@ public:
 
  // ScenarioC(ScenarioC const & source);
   ScenarioC & operator= (ScenarioC  const & source);
-/*
   ~ScenarioC(){
-	  //std::cout<<"passage dans le destructeur de ScenarioC\n";
-    if( paramvar != NULL) {delete [] paramvar; paramvar=NULL;}
-    if( time_sample != NULL) {delete [] time_sample; time_sample=NULL;}
-    if( stime_sample != NULL) {delete [] stime_sample; stime_sample=NULL;}
-    if( event != NULL) {delete [] event; event=NULL;}
-    if( ne0 != NULL) {delete [] ne0; ne0=NULL;}
-    if( histparam != NULL) {delete [] histparam; histparam=NULL;}
-    if( condition != NULL) {delete [] condition; condition=NULL;}
+  	if (not paramvar.empty()) paramvar.clear();
+  	if (not time_sample.empty()) time_sample.clear();
+  	if (not stime_sample.empty()) stime_sample.clear();
+  	if (not event.empty()) event.clear();
+  	if (not ne0.empty()) ne0.clear();
+  	if (not histparam.empty()) histparam.clear();
+  	if (not condition.empty()) condition.clear();
   };
-	*/
+  
   /* détermination du ou des paramètres contenus dans la std::string s */
   void detparam(std::string s,int cat);
   /* lecture/interprétation des lignes d'un scénario */

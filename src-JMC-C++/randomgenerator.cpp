@@ -18,7 +18,6 @@ extern"C"{
 }
 #include "mesutils.h"
 #include "randomgenerator.h"
-#include "particleset.h"
 //#include <time.h>
 
 //#define MODULO 16777216

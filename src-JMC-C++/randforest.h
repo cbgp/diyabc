@@ -30,13 +30,17 @@ class NodeRC
 public:
 	int pere,filsG,filsD,nvar,nsets,npassages,nsetG,nsetD,model,imax;
 	double cutval,disval,disval2,delta;
-	bool terminal;
+	bool terminal,gauche;
 	vector <int>indvar;
 	vector <int>numset;
 	vector <int>numsetG;
 	vector <int>numsetD;
-	bool getdisval(MwcGen& mw);
-	double caldisval(int nscen, int nsets, const vector<VMC>&vm, double val, vector <int>& nn);	
+	int regle3(vector <VMC> vm, vector <int>b, MwcGen& mw);	
+	double calGinimin(vector <VMC>& vm,double &cutval, vector <int> modfreq);
+	double calGini(vector <VMC>& vm, double cutval);
+	vector <int> calmodfreq(vector <VMC> vm);	
+	int getdisval(MwcGen& mw);
+//	double caldisval(int nscen, int nsets, const vector<VMC>&vm, double val, vector <int>& nn);	
 	~NodeRC() {
 		if (not indvar.empty()) indvar.clear();
 		if (not numset.empty()) numset.clear();
@@ -49,7 +53,7 @@ public:
 class TreeC 
 {
 public:
-	int nnodes,nsets,nvar,fmax;
+	int nnodes,nsets,nvar;
 	MwcGen mw;
 	bool fin;
 	
@@ -58,14 +62,17 @@ public:
 	vector <int> score;
 	vector <int> index;
 	vector <NodeRC> node;
-	vector <double> wind;
-	vector <double> wstat;
 	vector <bool> varused;
 	
+	void initree(int seed, int i);
 	int infermodel(const vector <double>& stat);
+	int infermodel2(double* stat);
 	void ecris(int num);
 	int calprofondeur(const vector <double>& stat);
 	int calprox(int n0, const vector <double>& stat, const vector <double>& statobs);
+	void deletree();
+	void ecrifich(ofstream& foret);
+	void lifich(ifstream& foret);
 	
 	~TreeC() {
 		if (not numset.empty()) numset.clear();
@@ -73,8 +80,6 @@ public:
 		if (not score.empty()) score.clear();
 		if (not index.empty()) index.clear();
 		if (not node.empty()) node.clear();
-		if (not wind.empty()) wind.clear();
-		if (not wstat.empty()) wstat.clear();
 		if (not varused.empty()) varused.clear();
 	}
 	TreeC & operator= (TreeC  const & source);
@@ -97,18 +102,17 @@ public:
 	vector <int> bootsamp;
 	vector <string> statname;
 	
-	void initrees(int seed);
-	void growtrees(int rep);
+	void growtrees(int seed, int rep);
 	double training_accuracy();
 	void infermodel();
 	int bestmodel(int nmod,vector <double>& vote, const vector <double>& stat);	
 	int bestmodel2(int k,int nmod,const vector <double>& stat);	
+	int bestmodel3(int k, int nscen,double* stat);
 	void var_importance();
 	void var_importance2();
-	void var_importance3(int rep);
     void dimimportance();
 	void readstat(bool LD);
-	void calposterior(int seed); 
+	void ecrifich(string nomfi);
 	
 	~RFC(){
 		if (not model.empty()) model.clear();
@@ -126,6 +130,8 @@ public:
 	RFC & operator= (RFC  const & source);
 };
 void dorandfor(std::string opt,  int seed);
-
+void lifich(string nomfi);
+void calposterior(int seed);
+void var_importance3(int rep);
 
 #endif /* RANDFOREST_H_ */

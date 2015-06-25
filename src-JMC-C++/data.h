@@ -66,32 +66,38 @@ public:
 		if (not sitmut2.empty()) sitmut2.clear();
 		if (not tabsit.empty()) tabsit.clear();
 		if (not freq.empty()) {
-			for (int i=0;i<freq.size();i++) {
+			int imax=(int)freq.size();
+			for (int i=0;i<imax;i++) {
 				if (not freq[i].empty()) freq[i].clear();
 			}
 		}
 		if (not haplomic.empty()) {
-			for (int i=0;i<haplomic.size();i++) {
+			int imax=(int)haplomic.size();
+			for (int i=0;i<imax;i++) {
 				if (not haplomic[i].empty()) haplomic[i].clear();
 			}
 		}
 		if (not haplodna.empty()) {
-			for (int i=0;i<haplodna.size();i++) {
+			int imax=(int)haplodna.size();
+			for (int i=0;i<imax;i++) {
 				if (not haplodna[i].empty()) haplodna[i].clear();
 			}
 		}
 		if (not haplodnavar.empty()) {
-			for (int i=0;i<haplodnavar.size();i++) {
+			int imax=(int)haplodnavar.size();
+			for (int i=0;i<imax;i++) {
 				if (not haplodnavar[i].empty()) haplodnavar[i].clear();
 			}
 		}
 		if (not haplosnp.empty()) {
-			for (int i=0;i<haplosnp.size();i++) {
+			int imax=(int)haplosnp.size();
+			for (int i=0;i<imax;i++) {
 				if (not haplosnp[i].empty()) haplosnp[i].clear();
 			}
 		}
 		if (not ploidie.empty()) {
-			for (int i=0;i<ploidie.size();i++) {
+			int imax=(int)ploidie.size();
+			for (int i=0;i<imax;i++) {
 				if (not ploidie[i].empty()) ploidie[i].clear();
 			}
 		}

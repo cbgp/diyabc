@@ -154,7 +154,7 @@ int nacp=100000,nprog,iprog;
         long double **matstat,*pca_statobs;
 		//float *stat_obs;
         enregC enr;
-        int bidon,*numscen,k;
+        int *numscen,k,bidon;
         resACPC rACP;
         //header.calstatobs(statobsfilename);
 		//stat_obs = header.stat_obs; 
@@ -173,9 +173,11 @@ int nacp=100000,nprog,iprog;
         rt.openfile2();
         for (int p=0;p<nacp;p++) {
                 bidon=rt.readrecord(&enr);
-                matstat[p] = new long double[rt.nstat];
-                numscen[p] = enr.numscen;
-                for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
+                if (bidon==0) {
+                	matstat[p] = new long double[rt.nstat];
+                	numscen[p] = enr.numscen;
+                	for (int j=0;j<rt.nstat;j++) matstat[p][j] = enr.stat[j];
+                }
         }
         rt.closefile();   cout<<"apres la lecture des "<<nacp<<" enregistrements\n";
         if (header.reference) {
@@ -234,7 +236,7 @@ int nacp=100000,nprog,iprog;
 		cout<<"debut de cal_loc\n";
 		//float *stat_obs,
 		float diff;
-        int scen,**avant,**apres,**egal,bidon,nparamax = 0,npartpos=0;
+        int scen,**avant,**apres,**egal,nparamax = 0,npartpos=0,bidon;
         enregC enr;
         string **star;
         //header.calstatobs(statobsfilename);
@@ -253,10 +255,12 @@ int nacp=100000,nprog,iprog;
         rt.openfile2();
 		cout<<"avant la lecture des enregistrements  header.reference = "<<header.reference<<"\n";
         for (int p=0;p<rt.nrec;p++) {
-			if (not header.reference) bidon=rt.readrecord(&enr);
-			else {
+			if (not header.reference) {
+				bidon=rt.readrecord(&enr);
+				if (bidon!=0) cout<<"probleme dans la lecture de la table de référence n="<<p<<"\n";
+			} else {
 				do {bidon=rt.readrecord(&enr);}
-				while (enr.stat[0]>1.0);
+				while ((bidon==0)and(enr.stat[0]>1.0));
 			}
 			npartpos++;
             scen=enr.numscen-1;
@@ -315,15 +319,15 @@ int nacp=100000,nprog,iprog;
 /**
  * interprète la commande de l'option pre-evaluate prior-scenario combination et lance les calculs correspondants
  */
-    void doacpl(string opt,bool multithread, int seed){
+    void doacpl(string opt) {
     	string s,s0,s1;
     	vector<string> ss;
     	bool dopca = false,doloc = false;
     	cout<<"doacpl "<<opt<<"\n";
     	splitwords(opt, ";", ss);
-    	int ns = ss.size();
+    	int ns = (int)ss.size();
     	progressfilename = path + ident + "_progress.txt";
-    	for (int i=0;i<ss.size();i++) {
+    	for (int i=0;i<ns;i++) {
     		cout<<ss[i]<<"\n";
     		s0=ss[i].substr(0,2);
     		s1=ss[i].substr(2);

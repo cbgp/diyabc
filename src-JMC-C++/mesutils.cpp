@@ -181,7 +181,7 @@ string* splitwordsR(string s,string sep,int m,int *k){
 	while (s.find(sep)== 0) s=s.substr(1);
 	*k=0;
 	string *sb,s0,s1;
-	if (s.length()==0) {sb = new string[0];return sb;}
+	if (s.length()==0) {sb = new string[1];sb[0]="";return sb;}
 	s.append(sep);
 	s1=string();
 	for (int i=0; i < (int)s.length(); i++) {
@@ -290,6 +290,7 @@ int ndecimales(double mini,double maxi){
   double p;
   int k;
   if (mini>=1) return 0;
+  if (maxi<mini) cout<<"dans ndecimales maxi<mini \n";
   p = mini/100;
   k = 0;
   while (abs((long int)(p-round(p)))>1E-12) {k++;p=10*p;}
@@ -413,12 +414,13 @@ int arrondi(double a) {return (int)(a + 0.5);}
  */
 string TimeToStr(double ti) {
     string stime="";
-    int m_s,sec,min,hou,day;
+    //int m_s;
+    int sec,min,hou,day;
     day = int(ti)/86400; ti=ti-(double)day*86400;
     hou = int(ti)/3600;  ti=ti-(double)hou*3600;
     min = int(ti)/60;    ti=ti-(double)min*60;
     sec = int(ti)   ;    ti=ti-(double)sec;
-    m_s = int(1000*ti);
+    //m_s = int(1000*ti);
     if (day>0) {
         stime=IntToString(day)+" day";
         if (day>1) stime+="s "; else stime+=" ";
@@ -722,7 +724,7 @@ resAFD AFD(int nl, int nc, int *pop,long double *omega, long double **X, long do
     }
     matTI = new long double*[mcv.n];for(int i=0;i<mcv.n;i++) matTI[i] = new long double[mcv.n];
     //cout<<"avant invM\n";
-    err = inverse_Tik(mcv.n,mcv.cov,matTI);
+    err = inverse_Tik(mcv.n,mcv.cov,matTI); if (err>0) cout<<"err="<<err<<" dans inverse_Tik\n";
     matM = prodML(numpop.size(),nc,numpop.size(),prodML(numpop.size(),nc,nc,matCT,matTI),matC);
     //cout<<"avant jacobi\n";
     jacobiL(numpop.size(),matM,valprop,res.vectprop);
@@ -805,8 +807,8 @@ long double DCVM(int n, int m, long double *x, long double *y) {
 
 void combrank2(int n, int m, long double *x, long double *y,long double *rangx, long double *rangy) {
 	matC *A;
-	int k,i0,i1,imin,imax;
-	long double rmin,rmax;
+	int k,i0,i1;
+//	long double rmin,rmax;
 	A = new matC[n+m];
 	for (int i=0;i<n;i++) {A[i].v=x[i];A[i].num=0;A[i].ind=i;}
 	for (int i=0;i<m;i++) {A[n+i].v=y[i];A[n+i].num=1;A[n+i].ind=i;}

@@ -54,7 +54,7 @@ extern ReftableC rt;
 extern int nenr;
 long double **phistar;
 extern long double **phistarOK;
-extern DataC dataobs;
+extern DataC dataobs,datasim;
 extern vector <ScenarioC> scenario;
 
 void dosimfile(int seed){
@@ -68,11 +68,11 @@ void dosimfile(int seed){
 	progressfilename =path + "progress.txt";
 	nomfisim=header.datafilename;
 	ntest = header.nsimfile;
-	if (dataobs.filetype==0) cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
-	if (dataobs.filetype==1) cout<<"nombre de fichiers snp à simuler = "<<ntest<<"\n";
-	if (dataobs.filetype==0) sgp = ps.simulgenepop(ntest, multithread, seed);
-	if (dataobs.filetype==1) sgp = ps.simuldataSNP(ntest, multithread, seed);
-	cout<<"apres les simulations\n";
+	if (datasim.filetype==0) cout<<"nombre de fichiers genepop à simuler = "<<ntest<<"\n";
+	if (datasim.filetype==1) cout<<"nombre de fichiers snp à simuler = "<<ntest<<"\n";
+	if (datasim.filetype==0) sgp = ps.simulgenepop(ntest, multithread, seed);
+	if (datasim.filetype==1) sgp = ps.simuldataSNP(ntest, multithread, seed);
+	//cout<<"apres les simulations\n";
 	for (int i=0;i<ntest;i++) {
 		string sn=IntToString(i+1);
 		if (i<9)  sn ="0"+sn;
@@ -92,7 +92,7 @@ void dosimfile(int seed){
 }
 
     int detpstarOK(int nsel, int scen, int npv, long double **phistar) {
-		char c;
+		//char c;
         bool OK;
         int ip1,ip2,nphistarOK=0,k1,k0;
 		//cout<<"depstarOK 0  npv="<<npv<<"   nsel="<<nsel<<"   scen="<<scen<<"  nparamhist="<<scenario[scen].nparam<<"   nparamut="<<header.nparamut<<"\n";

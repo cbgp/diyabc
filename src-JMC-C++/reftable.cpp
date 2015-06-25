@@ -59,7 +59,8 @@ void ReftableC::sethistparamname(HeaderC const & header) {
 	}
 	if (header.nparamut>0) this->mutparam = new MutParameterC[header.nparamut];
 	cout<<"avant la boucle des scenarios  nscenarios ="<<scenario.size()<<"\n";
-	for (int i=0;i<scenario.size();i++) {
+	int imax=(int)scenario.size();
+	for (int i=0;i<imax;i++) {
 		nparamvar=0;
 		for (int p=0;p<scenario[i].nparam;p++)
 			if (not scenario[i].histparam[p].prior.constant)
@@ -263,7 +264,6 @@ int ReftableC::openfile2() {
 int ReftableC::testfile(string reftablefilename, int npart) {
 	bool corrompu=false;
 	cout<<"\nverification de l'integrite de la table de reference \nfichier"<<reftablefilename<<"\n";
-	char str[10000];
 	this->fifo.open(reftablefilename.c_str(),ios::in|ios::out|ios::binary);
 	this->fifo.seekg(0);
 	this->fifo.read((char*)&(this->nrec),sizeof(int));
@@ -384,7 +384,7 @@ void ReftableC::bintotxt() {
 	enr.param = vector <float>(npm);
 	enr.stat = vector <float>(this->nstat);
 	while (not fifo.eof()) {
-		bidon=this->readrecord(&enr);
+		bidon=this->readrecord(&enr); if(bidon!=0) cout<<"probleme à la lecture du reftable\n";
 		fprintf(f1,"%3d    ",enr.numscen);//printf("%3d    ",enr.numscen);
 		for (int i=0;i<this->nparam[enr.numscen-1];i++) {
 			//printf(" %12.4f",enr.param[i]);
@@ -429,7 +429,7 @@ void ReftableC::bintotxt2() {
 	enr.param = vector <float>(npm);
 	enr.stat = vector <float>(this->nstat);
 	while (not fifo.eof()) {
-		bidon=this->readrecord(&enr);
+		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"probleme à la lecture du reftable\n";
 		fprintf(f1,"%3d    ",enr.numscen);printf("%3d    ",enr.numscen);
 		for (int i=0;i<this->nstat;i++) fprintf(f1," %10.4f",enr.stat[i]);
 		fprintf(f1,"    ");
@@ -464,7 +464,7 @@ void ReftableC::bintocsv(HeaderC const & header) {
 	enr.param = vector <float>(npm);
 	enr.stat = vector <float>(this->nstat);
 	for (int j=0;j<this->nrec;j++) {
-		bidon=this->readrecord(&enr);
+		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"probleme à la lecture du reftable\n";
 		f2<<enr.numscen<<"\n";
 		for (int i=0;i<header.nstat;i++) {
 			f1<<enr.stat[i];
@@ -494,7 +494,7 @@ void ReftableC::concat() {
 	while (this->filename.c_str()[i]!='.') i--;
 	reftab[i]='\0';
 	char* num = new char[9];
-	n=sprintf (num, "_%d",nu++);
+	n=sprintf (num, "_%d",nu++);if (n<0) cout<<"probleme dans concat() \n";
 	strcpy(reftabname,reftab);
 	strcat(reftabname,num);
 	cout<<reftabname<<"\n";
@@ -584,7 +584,7 @@ int ReftableC::cal_varstat() {
 	i=0;
 	while (i<nrecutil) {
 		//cout<<"avant readrecord\n";
-		bidon=this->readrecord(&enr);
+		bidon=this->readrecord(&enr);if(bidon!=0)cout<<"problème dans la lecture du reftable\n";
 		//cout<<"coucou\n";
 		scenOK=false;iscen=0;
 		while((not scenOK)and(iscen<this->nscenchoisi)) {

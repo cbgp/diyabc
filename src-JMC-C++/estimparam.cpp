@@ -173,7 +173,7 @@ bool deltanul;
 * pour les paramètres originaux
 */
     void recalparamO(int n) {   
-        long double coefmarge=0.001,marge;
+        //long double coefmarge=0.001,marge;
         int jj,k;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparamcom];
@@ -292,8 +292,9 @@ bool deltanul;
 * pour les paramètres composites
 */
     void recalparamC(int n) {   
-        long double coefmarge=0.000000001,marge,**xx,pmut;
-        int jj,kk,qq,kscen;
+        //long double coefmarge=0.000000001,marge;
+        long double **xx,pmut;
+        int kk,qq,kscen;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparcompo];
         xx = new long double*[n];
@@ -350,7 +351,7 @@ bool deltanul;
 					} else {
 						kk=0;while (not ((header.mutparam[kk].groupe == gr)and(header.mutparam[kk].category ==0))) kk++;
 						qq=0;while (not ((header.mutparam[qq].groupe == gr)and(header.mutparam[qq].category ==2))) qq++;
-						//cout<<"dans recalparamC  kk="<<kk<<"  qq="<<qq<<"\n";
+						cout<<"dans recalparamC  kk="<<kk<<"  qq="<<qq<<"\n";
 						for (int j=0;j<npar;j++) {
 							if (scenario[rt.scenchoisi[0]-1].histparam[numpar[0][j]].category<2){
 								for (int i=0;i<n;i++) {
@@ -469,8 +470,9 @@ bool deltanul;
 * pour les paramètres scaled
 */
     void recalparamS(int n) {   
-        long double coefmarge=0.000000001,marge,**xx,pmut,Ne;
-        int jj,kk,qq,kp,kscen,nNe=0;
+        //long double coefmarge=0.000000001,marge,pmut;
+        long double **xx,Ne;
+        int kk,kp,kscen,nNe=0;
         alpsimrat = new long double*[n];
         for(int i=0;i<n;i++) alpsimrat[i] = new long double[nparscaled];
         xx = new long double*[n];
@@ -593,7 +595,7 @@ bool deltanul;
 * de la matrice des paramètres parsim (éventuellement transformés)
 */
     void rempli_mat(int n, float* stat_obs) {
-        int icc,np;
+        int icc;
         long double delta,som,x,*var_statsel,nn;
         long double *sx,*sx2,*mo;
         nn=(long double)n;
@@ -684,7 +686,7 @@ bool deltanul;
 	}
 	
 	long double ** cal_matC(int n) {
-        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**matBB,kap,mdiff,coeff;
+        long double **matX,**matXT,**matA,**matB,**matAA,**matC,**matBB,kap,coeff;
 		int err;
         matA = new long double*[nstatOKsel+1];
         for (int j=0;j<nstatOKsel+1;j++) matA[j] = new long double[n];
@@ -823,8 +825,8 @@ bool deltanul;
 */
     void calphistarO(int n, long double **phistar){
         //cout<<"debut de calphistarO\n";
-        int k,kk,qq;
-        long double pmut;
+        //int k,kk,qq;
+        //long double pmut;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparamcom;j++) {
                 phistar[i][j] = alpsimrat[i][j];
@@ -859,7 +861,6 @@ bool deltanul;
     
     
     void copyphistar(int n, int nparam, long double **phistar){
-		int k;
 		for (int i=0;i<n;i++) {
 			for (int j=0;j<nparam;j++) {
 				phistar[i][j] = alpsimrat[i][j];
@@ -871,14 +872,14 @@ bool deltanul;
 */
     void calphistarC(int n, long double **phistarcompo){
         //cout<<"debut de calphistarC\n";
-        int k,kk,qq;
-        long double pmut,ppp;
+        //int k,kk,qq;
+    	//long double ppp;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparcompo;j++) {
                 phistarcompo[i][j] = alpsimrat[i][j];
                 //if (i<100) cout<< phistarcompo[i][j]<<"   ";
                 for (int k=0;k<nstatOKsel;k++) phistarcompo[i][j] -= matX0[i][k]*beta[k+1][j];
-				ppp=phistarcompo[i][j];
+				//ppp=phistarcompo[i][j];
 				//for (int k=0;k<nstatOKsel;k++) if (beta[k+1][j]!=beta[k+1][j])cout<<"beta=nan  k="<<k<<"   j="<<j<<"    "<<beta[k+1][j]<<"\n";
                 //if(i<100) cout<< phistarcompo[i][j]<<"   ";
                 switch(numtransf) {
@@ -913,9 +914,9 @@ bool deltanul;
 */
     void calphistarS(int n, long double **phistarscaled){
         //cout<<"debut de calphistarS\n";
-        int k,kk,qq;
-        long double pmut;
-        long double **phista;
+        //int k,kk,qq;
+        //long double pmut;
+        //long double **phista;
         for (int i=0;i<n;i++) {
             for (int j=0;j<nparscaled;j++) {
                 phistarscaled[i][j] = alpsimrat[i][j];
@@ -1107,9 +1108,9 @@ bool deltanul;
 * lit les paramètres originaux des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimparO() {
-      int bidon,iscen,m,k,kk,qq,nr;
+      int bidon,m,nr ;
         bool scenOK;
-        long double pmut;
+        //long double pmut;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
         nr=0;for (int i=0;i<rt.nscenchoisi;i++) nr+=rt.nrecscen[rt.scenchoisi[i]-1];
         if (nsimpar>nr) nsimpar=nr;
@@ -1120,7 +1121,7 @@ bool deltanul;
         int i=0;
         rt.openfile2();
         while (i<nsimpar) {
-            bidon=rt.readrecord(&enr);
+            bidon=rt.readrecord(&enr);if (bidon!=0) cout<<"problème dans la lecture du reftable\n";
 			m=0;scenOK=false;
 			while ((not scenOK)and(m<rt.nscenchoisi)) {
 				scenOK=(enr.numscen==rt.scenchoisi[m]);
@@ -1139,7 +1140,7 @@ bool deltanul;
 * calcule les paramètres composites des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimparC() {
-      int bidon,iscen,m,k,kk,qq,nr;
+      int bidon,m,k,kk,qq,nr;
         bool scenOK;
         long double pmut;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
@@ -1152,7 +1153,7 @@ bool deltanul;
         int i=0;
         rt.openfile2();
         while (i<nsimpar) {
-            bidon=rt.readrecord(&enr);
+            bidon=rt.readrecord(&enr);if (bidon!=0) cout<<"problème dans la lecture du reftable\n";
 			m=0;scenOK=false;
 			while ((not scenOK)and(m<rt.nscenchoisi)) {
 				scenOK=(enr.numscen==rt.scenchoisi[m]);
@@ -1236,9 +1237,9 @@ bool deltanul;
 * calcule les paramètres scaled des enregistrements simulés pour l'établissement des distributions a priori'
 */
     void lisimparS() {
-      int bidon,iscen,m,k,nr,kk,nNe=0;
+      int bidon,m,k,nr,kk,nNe=0;
         bool scenOK;
-        long double pmut,Ne;
+        long double Ne;
         if (nsimpar>rt.nrec) nsimpar=rt.nrec;
         nr=0;for (int i=0;i<rt.nscenchoisi;i++) nr+=rt.nrecscen[rt.scenchoisi[i]-1];
         if (nsimpar>nr) nsimpar=nr;
@@ -1249,7 +1250,7 @@ bool deltanul;
         int i=0;
         rt.openfile2();
         while (i<nsimpar) {
-            bidon=rt.readrecord(&enr);
+            bidon=rt.readrecord(&enr);if (bidon!=0) cout<<"problème à la lecture de la reftable\n";
 			m=0;scenOK=false;
 			while ((not scenOK)and(m<rt.nscenchoisi)) {
 				scenOK=(enr.numscen==rt.scenchoisi[m]);
@@ -1415,7 +1416,7 @@ bool deltanul;
 */
     void histodensO(int n, bool multithread, string progressfilename,int* iprog,int* nprog, long double **phistar) {
         bool condition;
-        long double *densprior,*denspost,*x,delta;
+        long double *densprior,*denspost,*x;
         int ncl,ii;
         pardens = new pardensC[nparamcom];
 		//cout<<"dans histodens npar="<<npar<<"\n";
@@ -1474,7 +1475,7 @@ bool deltanul;
                 pardens[j].priord = new long double[pardens[j].ncl];
                 pardens[j].postd = new long double[pardens[j].ncl];
                 pardens[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardens[j].ncl-1);
-                delta = x[1]-x[0];
+                //delta = x[1]-x[0];
                 for (int k=0;k<pardens[j].ncl;k++) {
                     pardens[j].x[k]=x[0]+k*pardens[j].xdelta;
                     for (ii=0;ii<ncl-1;ii++) {
@@ -1498,14 +1499,14 @@ bool deltanul;
 * sinon la densité est évaluée pour 1000 points du min au max
 */
     void histodensC(int n, bool multithread, string progressfilename,int* iprog,int* nprog,long double **phistarcompo) {
-        bool condition;
-        long double *densprior,*denspost,*x,delta;
+        //bool condition;
+        long double *densprior,*denspost,*x;
         int ncl,ii;
         pardenscompo = new pardensC[nparcompo];
 		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparcompo;j++) {
             pardenscompo[j].ncl=1001;
-            condition=false;
+            //condition=false;
                 pardenscompo[j].xmin=1E100;pardenscompo[j].xmax=0;
                 for (int i=0;i<nsimpar;i++) {
                     if (pardenscompo[j].xmin>simparcompo[i][j]) pardenscompo[j].xmin=simparcompo[i][j];
@@ -1535,7 +1536,7 @@ bool deltanul;
                 pardenscompo[j].priord = new long double[pardenscompo[j].ncl];
                 pardenscompo[j].postd = new long double[pardenscompo[j].ncl];
                 pardenscompo[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardenscompo[j].ncl-1);
-                delta = x[1]-x[0];
+                //delta = x[1]-x[0];
                 for (int k=0;k<pardenscompo[j].ncl;k++) {
                     pardenscompo[j].x[k]=x[0]+k*pardenscompo[j].xdelta;
                     for (ii=0;ii<ncl-1;ii++) {
@@ -1559,14 +1560,14 @@ bool deltanul;
 * sinon la densité est évaluée pour 1000 points du min au max
 */
     void histodensS(int n, bool multithread, string progressfilename,int* iprog,int* nprog,long double **phistarscaled) {
-        bool condition;
-        long double *densprior,*denspost,*x,delta;
+        //bool condition;
+        long double *densprior,*denspost,*x;
         int ncl,ii;
         pardensscaled = new pardensC[nparscaled];
 		//cout<<"dans histodens npar="<<npar<<"\n";
         for (int j=0;j<nparscaled;j++) {
             pardensscaled[j].ncl=1001;
-            condition=false;
+            //condition=false;
                 pardensscaled[j].xmin=1E100;pardensscaled[j].xmax=0;
                 for (int i=0;i<nsimpar;i++) {
                     if (pardensscaled[j].xmin>simparscaled[i][j]) pardensscaled[j].xmin=simparscaled[i][j];
@@ -1596,7 +1597,7 @@ bool deltanul;
                 pardensscaled[j].priord = new long double[pardensscaled[j].ncl];
                 pardensscaled[j].postd = new long double[pardensscaled[j].ncl];
                 pardensscaled[j].xdelta = (x[ncl-1]-x[0])/(long double)(pardensscaled[j].ncl-1);
-                delta = x[1]-x[0];
+                //delta = x[1]-x[0];
                 for (int k=0;k<pardensscaled[j].ncl;k++) {
                     pardensscaled[j].x[k]=x[0]+k*pardensscaled[j].xdelta;
                     for (ii=0;ii<ncl-1;ii++) {
@@ -1837,7 +1838,7 @@ bool deltanul;
             }
         }
 
-        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat   nstatOK = "<<nstatOK<<"\n";
         //header.calstatobs(statobsfilename);  cout<<"apres read_statobs\n";
 		stat_obs = new float[header.nstat];
 		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];

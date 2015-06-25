@@ -20,6 +20,6 @@ struct resACPC
 resACPC ACP(int nli,int nco, long double **X, long double prop,int index);
 void cal_acp();
 void cal_loc();
-void doacpl(string opt,bool multithread, int seed);
+void doacpl(string opt);
 
 #endif /* ACPLOC_H_ */

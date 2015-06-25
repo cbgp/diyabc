@@ -71,12 +71,14 @@ extern int debuglevel;
 	if(not this->x.empty()) this->x.clear();
 	if(not source.x.empty()) {
 		this->x = vector<long double>(source.x.size());
-		for (int i=0;i<source.x.size();i++) this->x[i] = source.x[i];
+		int imax=(int)source.x.size();
+		for (int i=0;i<imax;i++) this->x[i] = source.x[i];
 	}
 	if(not this->w.empty()) this->w.clear();
 	if(not source.w.empty()) {
 		this->w = vector<long double>(source.w.size());
-		for (int i=0;i<source.w.size();i++) this->w[i] = source.w[i];
+		int imax=(int)source.w.size();
+		for (int i=0;i<imax;i++) this->w[i] = source.w[i];
 	}
 	return *this;
 }
@@ -155,9 +157,8 @@ double PriorC::drawfromprior(MwcGen & mw){
 void PriorC::readprior(string ss){
     string s1;
     vector<string> sb;
-    int j;
     s1 = ss.substr(3,ss.length()-4);
-    splitwords(s1,",", sb); j =sb.size();
+    splitwords(s1,",", sb);
     this->mini=atof(sb[0].c_str());
     this->maxi=atof(sb[1].c_str());
             this->ndec=ndecimales(this->mini,this->maxi);
@@ -427,6 +428,13 @@ void ScenarioC::libere() {
   }
 }*/
 
+Ne0C & Ne0C::operator=(Ne0C const & source) {
+	if (this == &source)  return *this;
+	this->name = source.name;
+	this->val = source.val;
+	return *this;
+}
+
 /**
  * Definition de l'operateur = pour une instance de la classe ScenarioC
  */
@@ -451,8 +459,8 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 		for (int i=0;i<this->nevent;i++) this->event[i] = source.event[i]; // copyevent supprimé (PP)
 	}
 
-	if(not this->ne0.empty()) this->ne0.clear();
-	if (not source.ne0.empty()) {
+	if(not this->ne0.empty()) {this->ne0.clear();}
+	if (not source.ne0.empty()) { 
 		this->ne0 = vector <Ne0C>(this->nn0);
 		for (int i=0;i<this->nn0;i++) this->ne0[i] = source.ne0[i];
 	}
@@ -481,12 +489,11 @@ ScenarioC & ScenarioC::operator= (ScenarioC  const & source) {
 		for (int i=0;i<this->nparamvar;i++) this->paramvar[i] = source.paramvar[i];
 	}
 	
-	if(not this->condition.empty()) this->condition.clear();
-	if (not source.condition.empty()) {
+	if(not this->condition.empty()) {this->condition.clear();}
+	if (not source.condition.empty()) { 
 		this->condition = vector <ConditionC>(this->nconditions);
-		for (int i=0;i<this->nconditions;i++) this->condition[i] = source.condition[i];
+		for (int i=0;i<this->nconditions;i++) {this->condition[i] = source.condition[i];}
 	}
-	
 	return *this;
 };
 
@@ -527,7 +534,7 @@ string ScenarioC::checklogic() {
 			//cout<<"   "<<monevent.pop2;
 		}
 	}
-	cout<<"nsamp="<<this->nsamp<<"    maxpop="<<maxpop<<"\n";
+	//cout<<"nsamp="<<this->nsamp<<"    maxpop="<<maxpop<<"\n";
 	//if (maxpop != this->nsamp)
 	//	return "the number of population sizes in line 1 is different from the number of populations found in subsequent lines";
 	bool *popexist;
@@ -655,7 +662,7 @@ void ScenarioC::detparam(string s,int cat) {
 			//cout<<"posigne = "<<posigne<<"\n";
 			ss.push_back(s1.substr(0,posigne));
 			s1=s1.substr(posigne+1);
-			cout<<"s1="<<s1<<"\n";;
+			//cout<<"s1="<<s1<<"\n";;
 		}
 	}
 	for (i = 0; i < (int)ss.size(); i++) {
@@ -734,7 +741,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 			this->event[i].nindMref=0;this->event[i].nindFref=0;
 			if (n==5) {this->event[i].nindMref=atoi(ss[3].c_str());this->event[i].nindFref=atoi(ss[4].c_str());}
 			//cout <<this->event[i].time<<"  SAMPLE"<<"   "<<this->event[i].pop<<"\n";
-			cout<<"SAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
+			//cout<<"SAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
 			
 		} else if (sevent=="REFSAMPLE") {
 			if (n>5) return "too many words at line "+IntToString(i+2);
@@ -747,7 +754,7 @@ string ScenarioC::read_events(int nl,string *ls) {
 			this->event[i].sample=this->nsamp;
 			this->event[i].nindMref=atoi(ss[3].c_str());
 			this->event[i].nindFref=atoi(ss[4].c_str());
-			cout<<"REFSAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
+			//cout<<"REFSAMPLE   nindref="<<this->event[i].nindMref+this->event[i].nindFref<<"\n";
 			
 		} else if (sevent=="MERGE") {
 			if (n>4) return "too many words at line "+IntToString(i+2);
@@ -825,17 +832,17 @@ string ScenarioC::read_events(int nl,string *ls) {
 	this->time_sample = vector<int>(this->nsamp);
 	this->stime_sample = vector<string>(this->nsamp);
 	n=-1;
-	cout<<"dans readevents : repérage des time_sample\n";
+	//cout<<"dans readevents : repérage des time_sample\n";
 	for (int i=0;i<this->nevent;i++) {
 		if ((this->event[i].action=='E')or(this->event[i].action=='R')) {
 			n++;
 			this->time_sample[n]=this->event[i].time;
 			if(this->event[i].time==-9999) this->stime_sample[n]=this->event[i].stime;
 			else this->stime_sample[n]=" ";
-			cout<<"this->stime_sample["<<n<<"] = ]"<<this->stime_sample[n]<<"[\n";
+			//cout<<"this->stime_sample["<<n<<"] = ]"<<this->stime_sample[n]<<"[\n";
 		}
 	}
-	cout<<"dans readevents : APRES repérage des time_sample\n";
+	//cout<<"dans readevents : APRES repérage des time_sample\n";
 	return "";
 }
 
@@ -858,8 +865,7 @@ void GeneTreeC::ecris() {
 }
 
 GeneTreeC & GeneTreeC::operator=(GeneTreeC const & source) {
-  if( this == &source)
-    return *this;
+  if( this == &source) return *this;
 
   if(not this->nodes.empty()) this->nodes.clear();
   if(not this->branches.empty()) this->branches.clear();
@@ -880,7 +886,26 @@ GeneTreeC & GeneTreeC::operator=(GeneTreeC const & source) {
   return *this;
 }
 
+EventC & EventC::operator=(EventC const & source) {
+	if( this == &source) return *this;
+	
+	this->action = source.action;
+	this->pop = source.pop;
+	this->pop1 = source.pop1;
+	this->pop2 = source.pop2;
+	this->sample = source.sample;
+	this->Ne = source.Ne;
+	this->time = source.time;
+	this->admixrate = source.admixrate;
+	this->numevent0 = source.numevent0;
+	this->nindMref = source.nindMref;
+	this->nindFref = source.nindFref;
+	this->stime = source.stime;
+	this->sNe = source.sNe;
+	this->sadmixrate = source.sadmixrate;
 
+	return *this;
+}
 
 
 

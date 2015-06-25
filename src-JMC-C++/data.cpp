@@ -23,6 +23,8 @@
 
 using namespace std;
 
+extern string path;
+
 vector<vector<vector<string> > >genotype;
 	
 	LocusC & LocusC::operator=(LocusC const & source) {
@@ -57,122 +59,159 @@ vector<vector<vector<string> > >genotype;
 		this->nsample = source.nsample;
 		this->nmisssnp = source.nmisssnp;
 		
+		if (not this->samplesize.empty()) this->samplesize.clear();
+		if (not source.samplesize.empty()) {
+			this->samplesize.resize(source.samplesize.size());
+			for (int i=0;i<(int)source.samplesize.size();i++) this->samplesize[i]=source.samplesize[i];
+		}
+		
+		if (not this->ploidie.empty()) this->ploidie.clear();
+		if (not source.ploidie.empty()) {
+			this->ploidie.resize(source.ploidie.size());
+			for (int i=0;i<(int)source.ploidie.size();i++) this->ploidie[i]=source.ploidie[i];
+		}
+		
 		if (not this->freq.empty()) {
-			for (int i=0;i<this->freq.size();i++) {
+			int imax=(int)this->freq.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->freq[i].empty()) this->freq[i].clear();
 			}
 		}
 		if (not source.freq.empty()) {
 			this->freq.resize(source.freq.size());
-			for (int i=0;i<source.freq.size();i++) {
+			int imax=(int)source.freq.size();
+			for (int i=0;i<imax;i++) {
 				this->freq[i].resize(source.freq[i].size());
-				for (int j=0;j<this->freq[i].size();j++) this->freq[i][j]=source.freq[i][j];
+				int jmax=(int)this->freq[i].size();
+				for (int j=0;j<jmax;j++) this->freq[i][j]=source.freq[i][j];
 			}
 		}
 		
 		if (not this->mutsit.empty()) this->mutsit.clear();
 		if (not source.mutsit.empty()) {
 			this->mutsit.resize(source.mutsit.size());
-			for (int i=0;i<source.mutsit.size();i++) this->mutsit[i] = source.mutsit[i];
+			int imax=(int)source.mutsit.size();
+			for (int i=0;i<imax;i++) this->mutsit[i] = source.mutsit[i];
 		}
 		
 		if (not this->sitmut.empty()) this->sitmut.clear();
 		if (not source.sitmut.empty()) {
 			this->sitmut.resize(source.sitmut.size());
-			for (int i=0;i<source.sitmut.size();i++) this->sitmut[i] = source.sitmut[i];
+			int imax=(int)source.sitmut.size();
+			for (int i=0;i<imax;i++) this->sitmut[i] = source.sitmut[i];
 		}
 		
 		if (not this->sitmut2.empty()) this->sitmut2.clear();
 		if (not source.sitmut2.empty()) {
 			this->sitmut2.resize(source.sitmut2.size());
-			for (int i=0;i<source.sitmut2.size();i++) this->sitmut2[i] = source.sitmut2[i];
+			int imax=(int)source.sitmut2.size();
+			for (int i=0;i<imax;i++) this->sitmut2[i] = source.sitmut2[i];
 		}
 		
 		if (not this->tabsit.empty()) this->tabsit.clear();
 		if (not source.tabsit.empty()) {
 			this->tabsit.resize(source.tabsit.size());
-			for (int i=0;i<source.tabsit.size();i++) this->tabsit[i] = source.tabsit[i];
+			int imax=(int)source.tabsit.size();
+			for (int i=0;i<imax;i++) this->tabsit[i] = source.tabsit[i];
 		}
 		
 		if (not this->haplomic.empty()) {
-			for (int i=0;i<this->haplomic.size();i++) {
+			int imax=(int)this->haplomic.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->haplomic[i].empty()) this->haplomic[i].clear();
 			}
 		}
 		if (not source.haplomic.empty()) {
 			this->haplomic.resize(source.haplomic.size());
-			for (int i=0;i<source.haplomic.size();i++) {
+			int imax=(int)source.haplomic.size();
+			for (int i=0;i<imax;i++) {
 				this->haplomic[i].resize(source.haplomic[i].size());
-				for (int j=0;j<this->haplomic[i].size();j++) this->haplomic[i][j]=source.haplomic[i][j];
+				int jmax=(int)this->haplomic[i].size();
+				for (int j=0;j<jmax;j++) this->haplomic[i][j]=source.haplomic[i][j];
 			}
 		}
 		
 		if (not this->haplodna.empty()) {
-			for (int i=0;i<this->haplodna.size();i++) {
+			int imax=(int)this->haplodna.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->haplodna[i].empty()) this->haplodna[i].clear();
 			}
 		}
 		if (not source.haplodna.empty()) {
 			this->haplodna.resize(source.haplodna.size());
-			for (int i=0;i<source.haplodna.size();i++) {
+			int imax=(int)source.haplodna.size();
+			for (int i=0;i<imax;i++) {
 				this->haplodna[i].resize(source.haplodna[i].size());
-				for (int j=0;j<this->haplodna[i].size();j++) this->haplodna[i][j]=source.haplodna[i][j];
+				int jmax=(int)this->haplodna[i].size();
+				for (int j=0;j<jmax;j++) this->haplodna[i][j]=source.haplodna[i][j];
 			}
 		}
 		
 		if (not this->haplodnavar.empty()) {
-			for (int i=0;i<this->haplodnavar.size();i++) {
+			int imax=(int)this->haplodnavar.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->haplodnavar[i].empty()) this->haplodnavar[i].clear();
 			}
 		}
 		if (not source.haplodnavar.empty()) {
 			this->haplodnavar.resize(source.haplodnavar.size());
-			for (int i=0;i<source.haplodnavar.size();i++) {
+			int imax=(int)source.haplodnavar.size();
+			for (int i=0;i<imax;i++) {
 				this->haplodnavar[i].resize(source.haplodnavar[i].size());
-				for (int j=0;j<this->haplodnavar[i].size();j++) this->haplodnavar[i][j]=source.haplodnavar[i][j];
+				int jmax=(int)this->haplodnavar[i].size();
+				for (int j=0;j<jmax;j++) this->haplodnavar[i][j]=source.haplodnavar[i][j];
 			}
 		}
 		
 		if (not this->haplodnavar.empty()) {
-			for (int i=0;i<this->haplodnavar.size();i++) {
+			int imax=(int)this->haplodnavar.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->haplodnavar[i].empty()) this->haplodnavar[i].clear();
 			}
 		}
 		if (not source.haplodnavar.empty()) {
 			this->haplodnavar.resize(source.haplodnavar.size());
-			for (int i=0;i<source.haplodnavar.size();i++) {
+			int imax=(int)source.haplodnavar.size();
+			for (int i=0;i<imax;i++) {
 				this->haplodnavar[i].resize(source.haplodnavar[i].size());
-				for (int j=0;j<this->haplodnavar[i].size();j++) this->haplodnavar[i][j]=source.haplodnavar[i][j];
+				int jmax=(int)this->haplodnavar[i].size();
+				for (int j=0;j<jmax;j++) this->haplodnavar[i][j]=source.haplodnavar[i][j];
 			}
 		}
 		
 		if (not this->haplosnp.empty()) {
-			for (int i=0;i<this->haplosnp.size();i++) {
+			int imax=(int)this->haplosnp.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->haplosnp[i].empty()) this->haplosnp[i].clear();
 			}
 		}
 		if (not source.haplosnp.empty()) {
 			this->haplosnp.resize(source.haplosnp.size());
-			for (int i=0;i<source.haplosnp.size();i++) {
+			int imax=(int)source.haplosnp.size();
+			for (int i=0;i<imax;i++) {
 				this->haplosnp[i].resize(source.haplosnp[i].size());
-				for (int j=0;j<this->haplosnp[i].size();j++) this->haplosnp[i][j]=source.haplosnp[i][j];
+				int jmax=(int)this->haplosnp[i].size();
+				for (int j=0;j<jmax;j++) this->haplosnp[i][j]=source.haplosnp[i][j];
 			}
 		}
-		
 		return *this;
 	}
 
 	MissingHaplo & MissingHaplo::operator=(MissingHaplo const & source) {
+		if (this== &source) return *this;
 		this->locus = source.locus;
 		this->sample = source.sample;
 		this->indiv = source.indiv;
+		return *this;
 	}
 
 	MissingNuc & MissingNuc::operator=(MissingNuc const & source) {
+		if (this== &source) return *this;
 		this->locus = source.locus;
 		this->sample = source.sample;
 		this->indiv = source.indiv;
-		this->nuc   = source.nuc;	
+		this->nuc   = source.nuc;
+		return *this;
 	}
 
 	DataC & DataC::operator=(DataC const & source) {
@@ -189,81 +228,97 @@ vector<vector<vector<string> > >genotype;
 		this->filetype = source.filetype;
 		this->sexratio = source.sexratio;
 		this->maf      = source.maf;
-		
+		//cout<<"dans operateur = de DataC\n";
 		if (not this->misshap.empty()) this->misshap.clear();
 		if (not source.misshap.empty()) {
 			this->misshap.resize(source.misshap.size());
-			for (int i=0;i<source.misshap.size();i++) this->misshap[i] = source.misshap[i];
+			int imax=(int)source.misshap.size();
+			for (int i=0;i<imax;i++) this->misshap[i] = source.misshap[i];
 		}
+		//cout<<"dans operateur = de DataC  misshap\n";
 		
 		if (not this->missnuc.empty()) this->missnuc.clear();
 		if (not source.missnuc.empty()) {
 			this->missnuc.resize(source.missnuc.size());
-			for (int i=0;i<source.missnuc.size();i++) this->missnuc[i] = source.missnuc[i];
+			int imax=(int)source.missnuc.size();
+			for (int i=0;i<imax;i++) this->missnuc[i] = source.missnuc[i];
 		}
+		//cout<<"dans operateur = de DataC  missnuc\n";
 		
 		if (not this->locus.empty()) this->locus.clear();
 		if (not source.locus.empty()) {
 			this->locus.resize(source.locus.size());
-			for (int i=0;i<source.locus.size();i++) this->locus[i] = source.locus[i];
+			int imax=(int)source.locus.size();
+			for (int i=0;i<imax;i++) this->locus[i] = source.locus[i];
 		}
+		//cout<<"dans operateur = de DataC locus\n";
 		
 		if (not this->catexist.empty()) this->catexist.clear();
 		if (not source.catexist.empty()) {
 			this->catexist.resize(source.catexist.size());
-			for (int i=0;i<source.catexist.size();i++) this->catexist[i] = source.catexist[i];
+			int imax=(int)source.catexist.size();
+			for (int i=0;i<imax;i++) this->catexist[i] = source.catexist[i];
 		}
+		//cout<<"dans operateur = de DataC catexist\n";
 		
 		if (not this->nind.empty()) this->nind.clear();
 		if (not source.nind.empty()) {
 			this->nind.resize(source.nind.size());
-			for (int i=0;i<source.nind.size();i++) this->nind[i] = source.nind[i];
+			int imax=(int)source.nind.size();
+			for (int i=0;i<imax;i++) this->nind[i] = source.nind[i];
 		}
+		//cout<<"dans operateur = de DataC nind\n";
 		
 		if (not this->indivname.empty()) {
-			for (int i=0;i<this->indivname.size();i++) {
+			int imax=(int)this->indivname.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->indivname[i].empty()) this->indivname[i].clear();
 			}
-		}
-		if (not this->locus.empty()) this->locus.clear();
-		if (not source.locus.empty()) {
-			this->locus.resize(source.locus.size());
-			for (int i=0;i<source.locus.size();i++) this->locus[i] = source.locus[i];
-		}
-		
+		}		
 		if (not source.indivname.empty()) {
 			this->indivname.resize(source.indivname.size());
-			for (int i=0;i<source.indivname.size();i++) {
+			int imax=(int)source.indivname.size();
+			for (int i=0;i<imax;i++) {
 				this->indivname[i].resize(source.indivname[i].size());
-				for (int j=0;j<this->indivname[i].size();j++) this->indivname[i][j]=source.indivname[i][j];
+				int jmax=(int)this->indivname[i].size();
+				for (int j=0;j<jmax;j++) this->indivname[i][j]=source.indivname[i][j];
 			}
 		}
+		//cout<<"dans operateur = de DataC indivname\n";
 		
 		if (not this->ssize.empty()) {
-			for (int i=0;i<this->ssize.size();i++) {
+			int imax=(int)this->ssize.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->ssize[i].empty()) this->ssize[i].clear();
 			}
 		}
 		if (not source.ssize.empty()) {
 			this->ssize.resize(source.ssize.size());
-			for (int i=0;i<source.ssize.size();i++) {
+			int imax=(int)source.ssize.size();
+			for (int i=0;i<imax;i++) {
 				this->ssize[i].resize(source.ssize[i].size());
-				for (int j=0;j<this->ssize[i].size();j++) this->ssize[i][j]=source.ssize[i][j];
+				int jmax=(int)this->ssize[i].size();
+				for (int j=0;j<jmax;j++) this->ssize[i][j]=source.ssize[i][j];
 			}
 		}
+		//cout<<"dans operateur = de DataC ssize\n";
 		
 		if (not this->indivsexe.empty()) {
-			for (int i=0;i<this->indivsexe.size();i++) {
+			int imax=(int)this->indivsexe.size();
+			for (int i=0;i<imax;i++) {
 				if (not this->indivsexe[i].empty()) this->indivsexe[i].clear();
 			}
 		}
 		if (not source.indivsexe.empty()) {
 			this->indivsexe.resize(source.indivsexe.size());
-			for (int i=0;i<source.indivsexe.size();i++) {
+			int imax=(int)source.indivsexe.size();
+			for (int i=0;i<imax;i++) {
 				this->indivsexe[i].resize(source.indivsexe[i].size());
-				for (int j=0;j<this->indivsexe[i].size();j++) this->indivsexe[i][j]=source.indivsexe[i][j];
+				int jmax=(int)this->indivsexe[i].size();
+				for (int j=0;j<jmax;j++) this->indivsexe[i][j]=source.indivsexe[i][j];
 			}
 		}
+		cout<<"dans operateur = de DataC avant le return\n";
 		return *this;
 	}
 
@@ -288,11 +343,11 @@ string  getligne(ifstream file) {
 */
 	int DataC::testfile(string filename){
 		//cout<<"debut de testfile fichier "<<filename<<"\n";
-	    int nss,prem;
-	    string ligne;
-	    vector<string> ss;
 		ifstream file0(filename.c_str(), ios::in);
 		if (file0 == NULL) {cout<<"file0=NULL\n";return -1;}
+	    int nss;
+	    string ligne;
+	    vector<string> ss;
 		getline(file0,ligne);
 		cout<<ligne<<"\n";
 		ligne=purgetab(ligne);
@@ -301,7 +356,7 @@ string  getligne(ifstream file) {
 			cout<<ss[0]<<" "<<ss[1]<<" "<<ss[2]<<"\n";
 			if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 			cout<<"Fichier "<<filename<<" : SNP\n";
-			prem=0;
+			//prem=0;
 			return 1;
 			}
 		}
@@ -313,7 +368,7 @@ string  getligne(ifstream file) {
 		//cout<<"apres le deuxième splitwords\n";
 		if ((ss[0]=="IND")and(ss[1]=="SEX")and(ss[2]=="POP")) {
 		  cout<<"Fichier "<<filename<<" : SNP\n";
-		  prem=1;
+		  //prem=1;
 		  return 1;
 		}
 		file0.close();
@@ -351,8 +406,8 @@ string  getligne(ifstream file) {
 				}
 			}
 		}
-		cout<<"avant le delete\n";
-		cout<<"avant return 0 dans testfile\n";
+		//cout<<"avant le delete\n";
+		//cout<<"avant return 0 dans testfile\n";
 		return 0;
 	}
 
@@ -361,6 +416,7 @@ string  getligne(ifstream file) {
 */
 	int  DataC::readfilesnp(string filename){
 		int ech,ind,nech,nss,j0,j1,k0,k1,prem;
+		int stringnpos=(int)string::npos;
 		bool deja;
 		string s1,s,sss;
 		vector<string> ss;
@@ -373,14 +429,14 @@ string  getligne(ifstream file) {
 		} else this->message="";
 		getline(file,s1);s1=purgetab(s1);
 		j0=s1.find("<NM=");k0=s1.find("<MAF=");cout<<"k0="<<k0<<"\n";
-		if ((j0!=string::npos)or(k0!=string::npos)) {
-			if (j0!=string::npos){ 
+		if ((j0!=stringnpos)or(k0!=stringnpos)) {
+			if (j0!=stringnpos){ 
 							//cout<<"j0="<<j0<<"\n";
 				j1=s1.find("NF>",j0+3);
 				s=s1.substr(j0+4,j1-(j0+4));
 				this->sexratio=atof(s.c_str())/(1.0+atof(s.c_str()));
 			}
-			if (k0!=string::npos){
+			if (k0!=stringnpos){
 				s=s1.substr(k0,s1.length());cout<<"s="<<s<<"\n";
 				k1=s.find(">");cout<<"k1="<<k1<<"\n";
 				s=s.substr(5,k1-5);cout<<"s="<<s<<"\n";
@@ -601,79 +657,9 @@ string  getligne(ifstream file) {
 	}
 
 	void DataC::missingdata(){
-		int ind,ech,ng,typ,plo,ii;
+		int ech,typ;
 		short int misval=9;
 		this->nmisssnp=0;
-		/*for (ech=0;ech<this->nsample;ech++) {
-			for (int loc=0;loc<this->nloc;loc++) {
-				typ=this->locus[loc].type % 5;
-				ng=0;
-				for (ind=0;ind<this->nind[ech];ind++){
-					plo=1;
-					if ((typ == 0)or((typ == 2)and(this->indivsexe[ech][ind] == 2))) plo=2;
-					cout<<"ech="<<ech<<"  ind="<<ind<<"  loc="<<loc<<"  plo="<<plo<<"   "<<genotype[ech][ind][loc]<<"\n";
-					if (genotype[ech][ind][loc]==misval) {
-						if (plo==2){
-							this->misssnp[this->nmisssnp].locus = loc;
-							this->misssnp[this->nmisssnp].sample = ech;
-							this->misssnp[this->nmisssnp].indiv = ng;
-							this->nmisssnp++;
-							this->misssnp[this->nmisssnp].locus = loc;
-							this->misssnp[this->nmisssnp].sample = ech;
-							this->misssnp[this->nmisssnp].indiv = ng+1;
-							this->nmisssnp++;
-						}
-						if (plo==1){
-							this->misssnp[this->nmisssnp].locus = loc;
-							this->misssnp[this->nmisssnp].sample = ech;
-							this->misssnp[this->nmisssnp].indiv = ng;
-							this->nmisssnp++;
-						}
-					}
-					ng +=plo;
-					cout<<"ng="<<ng<<"\n";
-				}
-			}
-		}*/
-	/*	for (ech=0;ech<this->nsample;ech++) {
-			for (int loc=0;loc<this->nloc;loc++) {
-				typ=this->locus[loc].type % 5;
-				for (int i=0;i<this->ssize[typ][ech];i++) {
-					if (this->locus[loc].haplosnp[ech][i]==misval) this->nmisssnp++;
-				}
-			}
-		}
-		this->misssnp = vector<MissingHaplo>(nmisssnp);
-		this->nmisssnp=0;
-		for (ech=0;ech<this->nsample;ech++) {
-			for (int loc=0;loc<this->nloc;loc++) {
-				typ=this->locus[loc].type % 5;
-				for (int i=0;i<this->ssize[typ][ech];i++) {
-					if (this->locus[loc].haplosnp[ech][i]==misval) {
-							this->misssnp[this->nmisssnp].locus = loc;
-							this->misssnp[this->nmisssnp].sample = ech;
-							this->misssnp[this->nmisssnp].indiv = i;
-							this->nmisssnp++;
-					}
-				}
-			}
-		}
-		for (int loc=0;loc<this->nloc;loc++) {
-			this->locus[loc].nmisssnp=0;
-			for (int i=0;i<this->nmisssnp;i++) {
-				if (this->misssnp[i].locus==loc)this->locus[loc].nmisssnp++;
-			}
-			if (this->locus[loc].nmisssnp>0) {
-				this->locus[loc].misssnp = new MissingSnp[this->locus[loc].nmisssnp];
-				ii=0;
-				for (int i=0;i<this->nmisssnp;i++) {
-					if (this->misssnp[i].locus==loc) {
-						this->locus[loc].misssnp[ii].sample = this->misssnp[i].sample;
-						this->locus[loc].misssnp[ii].indiv  = this->misssnp[i].indiv;
-					}
-				}
-			}
-		}*/
 		for (int loc=0;loc<this->nloc;loc++) {
 			typ = this->locus[loc].type % 5;
 			for (ech=0;ech<this->nsample;ech++) {
@@ -836,8 +822,14 @@ string  getligne(ifstream file) {
 				for (int ind=0;ind<this->nind[ech];ind++) f1.write((char*)&(this->locus[kloc].ploidie[ech][ind]),sizeof(short int));
 			}
 		}
-		f1.write((char*)&(this->maf),sizeof(double));
 		f1.close();
+		ofstream fmaf;
+		string nomfimaf=path+"maf.txt";
+		fmaf.open(nomfimaf.c_str());
+		if (this->maf == 0.0) fmaf<<"hudson's algorithm";
+		else fmaf<<this->maf;
+		fmaf<<"\n";
+		fmaf.close();
 		cout<<"fin de ecribin\n";
 		delete [] indexx;
 	}
@@ -847,6 +839,16 @@ string  getligne(ifstream file) {
 */
 	void DataC::libin(string filenamebin) {
 		fstream f0;
+		string nomfimaf=path+"maf.txt";
+		ifstream fmaf(nomfimaf.c_str());
+		string smaf;
+		if (not fmaf.fail()) {
+			getline(fmaf,smaf);
+			cout<<"smaf="<<smaf<<"\n";
+			this->maf=(double)atof(smaf.c_str());} 
+		else this->maf=0.0;
+		cout<<"THIS->MAF="<<this->maf<<"\n";
+		if ((this->maf>=1.0)or(this->maf<0.0)) {cout<<"Incorrect value of Minor Allele Frequency.\n";exit(1);}
 		char* buffer = new char[1000];
 		int lon,categ;
         f0.open(filenamebin.c_str(),ios::in|ios::binary);
@@ -909,9 +911,6 @@ string  getligne(ifstream file) {
 				for (int ind=0;ind<this->nind[ech];ind++) f0.read((char*)&(this->locus[loc].ploidie[ech][ind]),sizeof(short int));
 			}
 		}	
-		cout<<"avant libin maf\n";
-		if (not f0.eof()) f0.read((char*)&(this->maf),sizeof(double));
-		else (this->maf=0.0);
 		cout<<"this->maf="<<this->maf<<"\n";
 		f0.close();
 		delete []buffer;
@@ -992,8 +991,8 @@ string  getligne(ifstream file) {
 	    	getline(file,s);
 		}
 		file.close();
-		cout<<"  nmisshap="<<nmisshap<<"\n";
-		int oldnsample = this->nsample;
+		//cout<<"  nmisshap="<<nmisshap<<"\n";
+		//int oldnsample = this->nsample;
 		this->nsample=nech;
 		this->nind.resize(nech);
 		for (int i=0;i<nech;i++) {this->nind[i]=nindi[i];}
@@ -1124,6 +1123,7 @@ string  getligne(ifstream file) {
 */
     void DataC::do_sequence(int loc){
         //cout<<"do_sequence locus"<<loc<<"\n";
+        int stringnpos=(int)string::npos;
 		cout<<"loc="<<loc<<"\n";
     	string geno;
     	string *gen = new string[2];
@@ -1177,7 +1177,7 @@ string  getligne(ifstream file) {
                     haplo.push_back(gen[i]);
     				if (gen[i]!="") {
     					j0=min(gen[i].find("-"),gen[i].find("N"));
-    					while (j0!=string::npos) {
+    					while (j0!=stringnpos) {
     						this->nmissnuc +=1;
     						this->missnuc[this->nmissnuc-1].sample=ech;
     						this->missnuc[this->nmissnuc-1].locus=loc;
@@ -1267,7 +1267,7 @@ string  getligne(ifstream file) {
     	filenamebin=filename+".bin";
     	cout<<filenamebin<<"\n";
     	this->filetype = this->testfile(filename);
-		cout<<"this->filetype = "<<this->filetype<<"\n";
+		//cout<<"this->filetype = "<<this->filetype<<"\n";
     	if (this->filetype==-2) {
     		this->message = "Unreckognized file format";
     		error =1; return 1;

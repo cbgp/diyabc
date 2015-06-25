@@ -93,7 +93,7 @@ bool valinfinie=false;
  * 
  */
 
-	long double** echantillon(int nsel, int nsimpar, int nparam, long double** simpar) {
+	long double** echantillon(int nsel, int nparam, long double** simpar) {
 		long double **sp;
 		sp = new long double*[nsel];
 		for (int i=0;i<nsel;i++) {
@@ -119,7 +119,7 @@ bool valinfinie=false;
     void resethistparam(string s) {
         string name,sprior,smini,smaxi;
         vector<string> ss; splitwords(s,"=",ss);
-        int n = ss.size();
+        //int n = ss.size();
         name=ss[0];
         int i=0;while((i<scenario[rt.scenteste-1].nparam)and(name != scenario[rt.scenteste-1].histparam[i].name)) i++;
         //cout<<"resethistparam   parametre "<<name<<"  ("<<i<<")   "<<ss[1]<<"\n";
@@ -153,12 +153,12 @@ bool valinfinie=false;
 	    cout<<"debut de resetmutparam\n";
         string numgr,s1,sg;
         vector<string> ss;
-        int n,gr,i0,i1;
+        int gr,i0,i1;
         numgr = s.substr(1,s.find("(")-1);  gr=atoi(numgr.c_str());
         i0=s.find("(");i1=s.find(")"); cout <<"i0="<<i0<<"  i1="<<i1<<"\n";
         s1 = s.substr(i0+1,i1-i0-1); cout <<"groupe "<<gr<<"  "<<s1<<"\n";
         splitwords(s1," ",ss);
-        n = ss.size();
+        //int n =(int)ss.size();
         if (groupe[gr].type==0) {
 		    //cout<<"mutmoy : \n";
 			//groupe[gr].priormutmoy.ecris();
@@ -242,7 +242,7 @@ bool valinfinie=false;
 /**
 * initialise les tableaux et les différentes statistiques de biais, rmse... pour les paramètres originaux
 */
-    void initbiasO(int ntest, int nsel,int nparamcom) {
+    void initbiasO(int ntest, int nsel) {
 		paramest = new parstatC*[ntest];
 		paretoil = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoil[i] = new long double[nparamcom];
@@ -301,7 +301,7 @@ bool valinfinie=false;
 		}
 	}
 	
-    void initbiasOS(int ntest, int nsel,int nparamcom) {
+    void initbiasOS(int ntest, int nsel) {
 		paretoilS = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilS[i] = new long double[nparamcom];
 		paramestmoyS = new long double[nparamcom];
@@ -365,7 +365,7 @@ bool valinfinie=false;
 /**
 * initialise les tableaux et les différentes statistiques de biais, rmse... pour les paramètres composites
 */
-    void initbiasC(int ntest, int nsel,int nparamcom) {
+    void initbiasC(int ntest, int nsel) {
 		paramestcompo = new parstatC*[ntest];
 		paretoilcompo = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilcompo[i] = new long double[nparcompo];
@@ -424,7 +424,7 @@ bool valinfinie=false;
 		}
 	}
 	
-    void initbiasCS(int ntest, int nsel,int nparamcom) {
+    void initbiasCS(int ntest, int nsel) {
 		paretoilcompoS = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilcompoS[i] = new long double[nparcompo];
 		paramestcompomoyS = new long double[nparamcom];
@@ -487,7 +487,7 @@ bool valinfinie=false;
 	}
 
 	
-	void initbiasS(int ntest, int nsel,int nparamcom) {
+	void initbiasS(int ntest, int nsel) {
 		paramestscaled = new parstatC*[ntest];
 		paretoilscaled = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilscaled[i] = new long double[nparscaled];
@@ -546,7 +546,7 @@ bool valinfinie=false;
 		}
 	}
 
-	void initbiasSS(int ntest, int nsel,int nparamcom) {
+	void initbiasSS(int ntest, int nsel) {
 		paretoilscaledS = new long double*[nsel];
 		for (int i=0;i<nsel;i++)paretoilscaledS[i] = new long double[nparscaled];
 		paramestscaledmoyS = new long double[nparamcom];
@@ -611,7 +611,7 @@ bool valinfinie=false;
 /**
 * ecrit les paramvv,les paramest et les sumstatdans un fichier
 */
-		void tracebiais(int ntest,int nsel,int npv,int p) {
+		void tracebiais(int p) {
 			ftrace.precision(5);
 			for (int j=0;j<nparamcom;j++) ftrace<<enreg2[p].paramvv[j]<<'\t';
 			for (int j=0;j<nparamcom;j++) ftrace<<paramest[p][j].moy<<'\t'<<paramest[p][j].med<<'\t'<<paramest[p][j].mod<<'\t';
@@ -623,10 +623,10 @@ bool valinfinie=false;
 /**
 * calcule les différentes statistiques de biais, rmse...
 */
-    void biaisrelO(int ntest,int nsel,int npv,int p) {
+    void biaisrelO(int ntest,int nsel,int p) {
 		//cout<<"debut biaisrelO  p="<<p<<"\n";
         long double s,d,ds;
-		simparsel = echantillon(nsel,nsimpar,nparamcom,simpar);
+		simparsel = echantillon(nsel,nparamcom,simpar);
 		if (p>0) delete []paramestS;
 		paramestS = calparstat(nsel,nparamcom,simparsel);
 		for (int j=0;j<nparamcom;j++){
@@ -763,9 +763,9 @@ bool valinfinie=false;
 /**
 * calcule les différentes statistiques de biais, rmse... des paramètres compo
 */
-    void biaisrelC(int ntest,int nsel,int npv,int p) {
+    void biaisrelC(int ntest,int nsel, int p) {
         long double s,d,ds;		
-		simparcomposel = echantillon(nsel,nsimpar,nparcompo,simparcompo);
+		simparcomposel = echantillon(nsel,nparcompo,simparcompo);
 		if (p>0) delete []paramestcompoS;
 		paramestcompoS = calparstat(nsel,nparcompo,simparcomposel);
 		for (int j=0;j<nparcompo;j++){
@@ -902,10 +902,10 @@ bool valinfinie=false;
 /**
 * calcule les différentes statistiques de biais, rmse... des paramètres scaled
 */
-    void biaisrelS(int ntest,int nsel,int npv,int p) {
+    void biaisrelS(int ntest,int nsel,int p) {
 		//cout<<"debut de biaisrelS\n";
         long double s,d,ds;
-		simparscaledsel = echantillon(nsel,nsimpar,nparscaled,simparscaled);
+		simparscaledsel = echantillon(nsel,nparscaled,simparscaled);
 		if (p>0) delete []paramestscaledS;
 		paramestscaledS = calparstat(nsel,nparscaled,simparscaledsel);
 		for (int j=0;j<nparscaled;j++){
@@ -1151,7 +1151,7 @@ bool valinfinie=false;
 /**
  *   Mise en forme des résultats pour les paramètres originaux
  */ 
-	void ecriresO(int ntest,int npv,int nsel) {
+	void ecriresO(int ntest,int nsel) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -1291,7 +1291,7 @@ bool valinfinie=false;
 /**
  *   Mise en forme des résultats pour les paramètres composites
  */ 
-	void ecriresC(int ntest,int npv,int nsel) {
+	void ecriresC(int ntest,int nsel) {
         time_t rawtime;
         struct tm * timeinfo;
         time ( &rawtime );
@@ -1435,7 +1435,7 @@ bool valinfinie=false;
 /**
  *   Mise en forme des résultats pour les paramètres scaled
  */ 
-	void ecriresS(int ntest,int npv,int nsel) {
+	void ecriresS(int ntest,int nsel) {
 		if (debuglevel==11) cout<<"debut de ecriresS\n";
         time_t rawtime;
         struct tm * timeinfo;
@@ -1697,9 +1697,8 @@ bool valinfinie=false;
  */
 	void dobias(string opt,  int seed){
 		cout<<"debut de dobias\n";
-        int nstatOK, iprog,nprog,bidule,k,nphistarOK,nenr=10,nenrt=0;
+        int iprog,nprog,k,nphistarOK,nenr=10,nenrt=0,nstatOK;
         int nrec = 0, nsel = 0,nrecpos = 0,ntest = 0,np,ng,npv,ncond,nt,*paordre,*paordreabs;
-		int npvmax,nss;
         string s, s0,s1,sg, entetelog, nomfitrace, nomfipar;
         vector<string> paname;
 		float *stat_obs;
@@ -1717,12 +1716,12 @@ bool valinfinie=false;
         cout<<"options : "<<opt<<"\n";
         vector<string> ss;  splitwords(opt,";",ss);
         int ns = ss.size();
-        vector<string> ss1; int nn = ss1.size();
+        vector<string> ss1;
         for (int i=0;i<ns;i++) { //cout<<ss[i]<<"\n";
             s0=ss[i].substr(0,2);
             s1=ss[i].substr(2);
             if (s0=="s:") {
-                splitwords(s1,",",ss1); nn = ss1.size();
+                splitwords(s1,",",ss1); 
                 rt.scenteste = atoi(ss1[0].c_str());
                 nrecpos=0;nrecpos +=rt.nrecscen[rt.scenteste-1];
                 cout <<"scenario choisi : "<<rt.scenteste<<"\n";
@@ -1791,7 +1790,7 @@ bool valinfinie=false;
         if (posterior) {
 			//calcul des posteriors
 			cout<<"rt.nrec="<<rt.nrec<<"\n";
-			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+			nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat  nstatOK = "<<nstatOK<<"\n";
 			cout<<"nrec="<<nrec<<"     nsel="<<nsel<<"\n";
 			rt.alloue_enrsel(nsel);
 			rt.cal_dist(nrec,nsel,&header.stat_obs[0],false,false);                        cout<<"apres cal_dist\n";
@@ -1927,27 +1926,27 @@ bool valinfinie=false;
 			cout<<"apres copie des stat\n";
         }
         file.close();
-        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat\n";
+        nstatOK = rt.cal_varstat();                       cout<<"apres cal_varstat  nstatOK = "<<nstatOK<<"\n";
         stat_obs = new float[rt.nstat];
         rt.alloue_enrsel(nsel);
         cout<<"apres rt.alloue_enrsel\n";
 		if (original) {
-			initbiasO(ntest,nsel,nparamcom);
-			initbiasOS(ntest,nsel,nparamcom);
+			initbiasO(ntest,nsel);
+			initbiasOS(ntest,nsel);
 			phistar = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistar[i] = new long double[nparamcom];
 			lisimparO();
 		}
 		if (composite) {
-			initbiasC(ntest,nsel,nparamcom); //PP: was nparcompo
-			initbiasCS(ntest,nsel,nparamcom); //PP: was nparcompo
+			initbiasC(ntest,nsel); //PP: was nparcompo
+			initbiasCS(ntest,nsel); //PP: was nparcompo
 			phistarcompo = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarcompo[i] = new long double[nparcompo];
 			lisimparC();
 		}
 		if (scaled) {
-			initbiasS(ntest,nsel,nparamcom); //PP: was nparcompo
-			initbiasSS(ntest,nsel,nparamcom); //PP: was nparcompo
+			initbiasS(ntest,nsel); //PP: was nparcompo
+			initbiasSS(ntest,nsel); //PP: was nparcompo
 			phistarscaled = new long double* [nsel];
 			for (int i=0;i<nsel;i++) phistarscaled[i] = new long double[nparscaled];
 			lisimparS();
@@ -1978,8 +1977,8 @@ bool valinfinie=false;
 					//for (int j=0;j<nparamcom;j++) cout<<"  "<<phistar[i][j]<<" ("<<enreg2[p].paramvv[j] <<")";
 					//cout<<"\n";
 				}
-				biaisrelO(ntest,nsel,npv,p);			if (debuglevel==11)   cout<<"apres biaisrelO\n";
-				tracebiais(ntest,nsel,npv,p);
+				biaisrelO(ntest,nsel,p);			if (debuglevel==11)   cout<<"apres biaisrelO\n";
+				tracebiais(p);
 			}
 			if (composite) {
 				recalparamC(nsel);                  	if (debuglevel==11)	cout<<"apres recalparamC\n";
@@ -1998,7 +1997,7 @@ bool valinfinie=false;
 				//for (int i=0;i<nsel;i++) delete []phistarcompo[i];delete phistarcompo;
 				//cout<<"apres delete phistarcompo\n";
 														if (debuglevel==11) cout <<"avant biaisrelC\n";
-				biaisrelC(ntest,nsel,npv,p);			if (debuglevel==11) cout <<"après biaisrelC\n";
+				biaisrelC(ntest,nsel,p);			if (debuglevel==11) cout <<"après biaisrelC\n";
 				
 			}
 			if (scaled) {
@@ -2014,7 +2013,7 @@ bool valinfinie=false;
 					//for (int j=0;j<nparscaled;j++) cout<<"  "<<phistarscaled[i][j]<<" ("<<enreg2[p].paramvvS[j] <<")";
 					//cout<<"\n";
 				}
-				biaisrelS(ntest,nsel,npv,p);			if (debuglevel==11)   cout<<"apres biaisrelS\n";
+				biaisrelS(ntest,nsel,p);			if (debuglevel==11)   cout<<"apres biaisrelS\n";
 			}
 			if (not deltanul){
 				for (int i=0;i<nstatOKsel+1;i++) delete [] matC[i];delete [] matC;
@@ -2029,15 +2028,15 @@ bool valinfinie=false;
 			for (int i=0;i<nsimpar;i++) delete []simpar[i];
 			delete [] simpar;
 			finbiaisrelO(ntest);
-			ecriresO(ntest,npv,nsel);
+			ecriresO(ntest,nsel);
 		}
          if (composite) {
 			finbiaisrelC(ntest);
-			ecriresC(ntest,npv,nsel);
+			ecriresC(ntest,nsel);
 		}
         if (scaled) {
 			finbiaisrelS(ntest);			if (debuglevel==11)	cout<<"apres biaisrelS\n";
-			ecriresS(ntest,npv,nsel);		if (debuglevel==11)	cout<<"apres ecriresS\n";
+			ecriresS(ntest,nsel);		if (debuglevel==11)	cout<<"apres ecriresS\n";
 		}
        iprog +=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
     }

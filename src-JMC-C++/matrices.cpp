@@ -386,7 +386,7 @@ double kappa (int n, long double * * A) {
         valprop = new long double[n];
         B  = new long double*[n];for (int i=0;i<n;i++) B[i]=new long double [n];
 		for (int i=0;i<n;i++) {for (int j=0;j<n;j++) B[i][j]=A[i][j];}
-		int nrot=jacobiL(n,B,valprop,vcprop);
+		int nrot=jacobiL(n,B,valprop,vcprop); if (nrot==0) cout<<"kappa nrot=0\n";
         for (int i=0;i<n-1;i++) {
             for (int j=i+1;j<n;j++) {
                 if (valprop[i]<valprop[j]) {piv=valprop[i];valprop[i]=valprop[j];valprop[j]=piv;}

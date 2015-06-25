@@ -117,8 +117,8 @@ matligneC *matA;
     posteriorscenC** comp_direct(int n) {
         int nts,k;
         posteriorscenC **posts;
-        double d,p,delta;
-        delta = rt.enrsel[n-1].dist;
+        double d,p;
+        //delta = rt.enrsel[n-1].dist;
         posts = new posteriorscenC*[ncs];
         for (int i=0;i<ncs;i++) {
             posts[i] = new posteriorscenC[rt.nscenchoisi];
@@ -226,9 +226,9 @@ matligneC *matA;
  * Appelle l'analyse factorielle discriminante et remplace les summary stats par les composantes des jeux simulés
  * sur les axes discriminants
  */
-    void transAFD(int nrec,int nsel, float* stat_obs) {
+    void transAFD(int nsel, float* stat_obs) {
         long double delta,rdelta,*w,a,**X,*statpiv;
-		float *sp;
+		//float *sp;
         int *scenar;
         resAFD afd;
         //cout<<"debut transfAFD\n";
@@ -241,7 +241,7 @@ matligneC *matA;
 		scenar = new int[nsel];for (int i=0;i<nsel;i++) scenar[i] = rt.enrsel[i].numscen;
         X = new long double*[nsel];for (int i=0;i<nsel;i++) X[i] = new long double[rt.nstat];
         statpiv = new long double[rt.nstat];
-		sp = new float[rt.nstat];
+		//sp = new float[rt.nstat];
         for (int i=0;i<nsel;i++) {for (int j=0;j<rt.nstat;j++) X[i][j]=(long double)rt.enrsel[i].stat[j];}
         //cout<<"avant AFD\n";
         afd = AFD(nsel,rt.nstat,scenar,w,X,1.0);
@@ -596,7 +596,7 @@ void swap_ld(long double& a, long double& b){
 * Numérote les scénarios (vecteur numod) dans l'attribution des probabilités a posteriori
 */
 void ordonne(int nmodel, int nli, int nco, long double *vecY, int *numod) {
-  long double swm = 0.0, xpiv = 0.0;
+  long double swm = 0.0;
   long double* sw = new long double[nmodel+1];
   for (int i=0; i<=nmodel; i++)   sw[i]=0.0;
   int k, ki;
@@ -698,7 +698,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
   int nmodel = cherche_max(vecY, nli); // int no;
 //  cout<<"debut de polytom_logistic_regression nmodel="<<nmodel<<"\n";
 //        double debut, duree;
-  double sx, sx2;
+  //double sx, sx2;
   int *numod = new int[nmodel+1];
   if (nmodel<1) {
     px[0]=1.0;pxi[0]=1.0;pxs[0]=1.0;return 0;
@@ -707,8 +707,8 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 
   ordonne(nmodel, nli, nco, vecY, numod);
   //cout <<"apres ordonne\n";
-  int l,m,n, nmodnco=nmodel*(nco+1);
-  long double betmin,betmax;
+  int nmodnco=nmodel*(nco+1);
+  //long double betmin,betmax;
 
   for (int i=0; i<nli; i++) {
     cmatX[i][0]=1.0;
@@ -1114,7 +1114,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
         nsel=nseld;if(nsel<nselr)nsel=nselr;
         nprog=6+nlogreg;
         iprog=1;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
-        nstatOK = rt.cal_varstat();
+        nstatOK = rt.cal_varstat(); cout<<"nstatOK="<<nstatOK<<"\n";
         //header.calstatobs(statobsfilename);
 		stat_obs = new float[header.nstat];
 		for (int i=0;i<header.nstat;i++) stat_obs[i]=header.stat_obs[i];
@@ -1122,7 +1122,7 @@ int polytom_logistic_regression(int nli, int nco, long double **cmatX0,
 //        clock_zero=0.0;debut=walltime(&clock_zero);
         rt.cal_dist(nrec,nsel,stat_obs,false,false);
 //        duree=walltime(&debut);time_readfile += duree;
-		if (AFD) transAFD(nrec,nsel,stat_obs);
+		if (AFD) transAFD(nsel,stat_obs);
         iprog+=4;fprog.open(progressfilename.c_str());fprog<<iprog<<"   "<<nprog<<"\n";fprog.close();
         postscendir = comp_direct(nseld);
         save_comp_direct(nseld,postscendir,path,ident);  cout<<"apres save_comp_direct\n";

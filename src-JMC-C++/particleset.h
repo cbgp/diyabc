@@ -39,9 +39,11 @@ struct ParticleSetC
     // réinitialisation de la particule p
     void resetparticle (int p);
 	// liberation des particules
-	void libere(int npart);
+	//void libere(int npart);
 	// simulation de particules de paramètres fixées
 	void dosimulstat(int debut, int npart, bool dnatrue, bool multithread, int numscen, int seed, double **stat);    
+	// simulation de particules de paramètres fixées
+	void dosimulstat2(int debut, int npartic, vector < vector <long double> > &phistarOKK, bool dnatrue, bool multithread, int numscen, int seed, double** stat);    
 	// simulation des particules utilisées pour le model checking
     void dosimulphistar(int npart, bool dnatrue,
     		            bool multithread,bool firsttime, int numscen,int seed,int nsel);
@@ -52,6 +54,7 @@ struct ParticleSetC
     string* simulgenepop(int npart, bool multithread, int seed);
     // simulation des particules utilisées pour la création de fichiers SNP
     string* simuldataSNP(int npart, bool multithread, int seed);
+	void free_particule(int npart);
 };
 
 

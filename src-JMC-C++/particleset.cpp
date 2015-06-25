@@ -65,10 +65,10 @@ void ParticleSetC::setgroup(int p) {
  * Structure ParticleSet : remplissage de la partie locus de la particule p
  */
 void ParticleSetC::setloci(int p) {
-	int kmoy,cat;
-	this->particule[p].nloc = dataobs.nloc;
+	int kmoy;
+	this->particule[p].nloc = dataobs.nloc;//cout<<"nloc="<<dataobs.nloc<<"\n";
 	this->particule[p].nsample = dataobs.nsample;
-	if(not particule[p].locuslist.empty()) particule[p].locuslist;
+	if(not particule[p].locuslist.empty()) particule[p].locuslist.clear();
 	this->particule[p].locuslist = vector <LocusC>(dataobs.nloc);
 	for (int kloc=0;kloc<dataobs.nloc;kloc++){
 		this->particule[p].locuslist[kloc].nsample = this->particule[p].nsample;
@@ -99,14 +99,17 @@ void ParticleSetC::setloci(int p) {
 		} else  if (dataobs.locus[kloc].type >= 10) {
 		//cout << "dans setloci locus "<<kloc<<"\n";
 			this->particule[p].locuslist[kloc].samplesize =  vector<int>(this->particule[p].nsample);
-			for (int ech=0;ech<this->particule[p].nsample;ech++) 
+			for (int ech=0;ech<this->particule[p].nsample;ech++) {
 				this->particule[p].locuslist[kloc].samplesize[ech] = dataobs.locus[kloc].samplesize[ech];
+			}
+			//cout<<"apres samplesize\n";	
 			this->particule[p].locuslist[kloc].ploidie = vector<vector<short int> >(this->particule[p].nsample);
 			for (int ech=0;ech<this->particule[p].nsample;ech++) {
 				this->particule[p].locuslist[kloc].ploidie[ech] = vector <short int>(dataobs.nind[ech]);
 				for (int i=0;i<dataobs.nind[ech];i++)
 					this->particule[p].locuslist[kloc].ploidie[ech][i] = dataobs.locus[kloc].ploidie[ech][i];		
 			}
+			//cout<<"apres ploidie\n";
 			if (dataobs.locus[kloc].type == 13) {
 				if (this->particule[p].samplesizeY.empty()) this->particule[p].samplesizeY = vector<int>(this->particule[p].nsample);
 				for (int ech=0;ech<this->particule[p].nsample;ech++) {
@@ -137,11 +140,12 @@ void ParticleSetC::setscenarios (int p, bool simulfile) {
 	this->particule[p].drawuntil = header.drawuntil;
 	if(not particule[p].scenario.empty()) particule[p].scenario.clear();
 	this->particule[p].scenario =vector <ScenarioC>(scenario.size());
-	for (int i=0;i<scenario.size();i++) this->particule[p].scenario[i] = scenario[i];
+	int imax=(int)scenario.size();
+	for (int i=0;i<imax;i++) this->particule[p].scenario[i] = scenario[i];
 	this->particule[p].scen = header.scen;
 	if (simulfile) {
 		int ip;
-		for (int i=0;i<scenario.size();i++) {
+		for (int i=0;i<imax;i++) {
 			for (int ievent=0;ievent<this->particule[p].scenario[i].nevent;ievent++) {
 				//cout<<"ievent="<<ievent<<"   <"<<this->particule[p].scenario[i].event[ievent].time<<">   {"<<this->particule[p].scenario[i].event[ievent].stime <<"}\n";
 				if (this->particule[p].scenario[i].event[ievent].stime.length()>0) {
@@ -198,7 +202,10 @@ void ParticleSetC::resetparticle (int p) {
 }
 
 void ParticleSetC::init_particule(int npart, bool dnatrue, bool simulfile,int seed) {
-	this->particule = vector<ParticleC>(npart);
+	if (debuglevel==5) cout<<"debut de init_particule npart="<<npart<<"\n";
+	this->particule.resize(npart);
+	//this->particule = vector<ParticleC>(npart);
+	if (debuglevel==5) cout<<"après dimensionnement du vecteur de particules\n";
 	for (int p=0;p<npart;p++) {
 		if (debuglevel==5) cout <<"avant set particule "<<p<<"\n";
 		this->particule[p].dnatrue = dnatrue;
@@ -207,33 +214,120 @@ void ParticleSetC::init_particule(int npart, bool dnatrue, bool simulfile,int se
 		this->setgroup(p);
 		if (debuglevel==5) cout<<"setgroup\n";
 		this->setloci(p);
-		if (debuglevel==5) cout<<"setloci\n";
+		if (debuglevel==5) cout<<"setloci   nloc="<<this->particule [p].nloc<<"\n";
 		this->setscenarios(p,simulfile);
 		if (debuglevel==5) cout<<"setscenarios\n";
 		this->particule[p].mw.randinit(p,seed);
-		if (debuglevel==5) cout<< "                    apres set particule "<<p<<"\n";
+		if (debuglevel==5) cout<< "                    apres init_particule 					particule "<<p<<"\n";
 	}
 	
 }
 
+void ParticleSetC::free_particule(int npart) {
+	cout<<"debut de free_particule\n";
+	int n,imax;
+	for (int p=0;p<npart;p++) {
+		//Partie grouplist
+		int grmax=(int)groupe.size();
+		for (int gr=1;gr<grmax;gr++) {
+			//particuleobs.grouplist[gr] = groupe[gr];
+			for (int i=0;i<groupe[gr].nstatsnp;i++){
+				this->particule[p].grouplist[gr].sumstatsnp[i].x.clear();
+				this->particule[p].grouplist[gr].sumstatsnp[i].w.clear();
+			}
+			if (not this->particule[p].grouplist[gr].sumstatsnp.empty()) this->particule[p].grouplist[gr].sumstatsnp.clear();
+			if (not this->particule[p].grouplist[gr].sumstat.empty()) this->particule[p].grouplist[gr].sumstat.clear();
+			if (not this->particule[p].grouplist[gr].loc.empty()) this->particule[p].grouplist[gr].loc.clear();
+		}
+		if (not this->particule[p].grouplist.empty()) this->particule[p].grouplist.clear();
+		//Partie locuslist
+		for (int kloc=0;kloc<dataobs.nloc;kloc++) {
+			if (not this->particule[p].locuslist[kloc].mutsit.empty()) this->particule[p].locuslist[kloc].mutsit.clear();
+			if (not this->particule[p].locuslist[kloc].sitmut.empty()) this->particule[p].locuslist[kloc].sitmut.clear();
+			if (not this->particule[p].locuslist[kloc].sitmut2.empty()) this->particule[p].locuslist[kloc].sitmut2.clear();
+			if (not this->particule[p].locuslist[kloc].tabsit.empty()) this->particule[p].locuslist[kloc].tabsit.clear();
+			if (not this->particule[p].locuslist[kloc].freq.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].freq.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].freq[i].empty()) this->particule[p].locuslist[kloc].freq[i].clear();
+				}
+			}
+			if (not this->particule[p].locuslist[kloc].haplomic.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].haplomic.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].haplomic[i].empty()) this->particule[p].locuslist[kloc].haplomic[i].clear();
+				}
+			}
+			if (not this->particule[p].locuslist[kloc].haplodna.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].haplodna.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].haplodna[i].empty()) this->particule[p].locuslist[kloc].haplodna[i].clear();
+				}
+			}
+			if (not this->particule[p].locuslist[kloc].haplodnavar.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].haplodnavar.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].haplodnavar[i].empty()) this->particule[p].locuslist[kloc].haplodnavar[i].clear();
+				}
+			}
+			if (not this->particule[p].locuslist[kloc].haplosnp.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].haplosnp.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].haplosnp[i].empty()) this->particule[p].locuslist[kloc].haplosnp[i].clear();
+				}
+			}
+			if (not this->particule[p].locuslist[kloc].ploidie.empty()) {
+				imax=(int)this->particule[p].locuslist[kloc].ploidie.size();
+				for (int i=0;i<imax;i++) {
+					if (not this->particule[p].locuslist[kloc].ploidie[i].empty()) this->particule[p].locuslist[kloc].ploidie[i].clear();
+				}
+			}
+		}
+		if (not this->particule[p].locuslist.empty()) this->particule[p].locuslist.clear();
+		//Partie scenario
+		cout<<"partie scenario  particule "<<p<<"\n";
+		imax=(int)this->particule[p].scenario.size();
+		for (int i=0;i<imax;i++) {
+				cout<<"        scenario "<<i<<"\n";
+			if (not this->particule[p].scenario[i].paramvar.empty()) this->particule[p].scenario[i].paramvar.clear();cout<<"            paramvar\n";
+  			if (not this->particule[p].scenario[i].time_sample.empty()) this->particule[p].scenario[i].time_sample.clear();cout<<"            time_sample\n";
+  			if (not this->particule[p].scenario[i].stime_sample.empty()) this->particule[p].scenario[i].stime_sample.clear();cout<<"            stime_sample\n";
+ 		 	if (not this->particule[p].scenario[i].event.empty()) this->particule[p].scenario[i].event.clear();cout<<"            event\n";
+  			if (not this->particule[p].scenario[i].ne0.empty()) this->particule[p].scenario[i].ne0.clear();cout<<"            ne0\n";
+  			if (not this->particule[p].scenario[i].histparam.empty()) this->particule[p].scenario[i].histparam.clear();cout<<"            histparam\n";
+  			n=this->particule[p].scenario[i].condition.size();cout<<"                    nconditions="<<n<<"\n";
+  			if (not this->particule[p].scenario[i].condition.empty()) this->particule[p].scenario[i].condition.resize(0);cout<<"            condition\n";
+		}
+		cout<<"avant scenario.clear\n";
+		this->particule[p].scenario.resize(3);
+		cout<<"apres scenario.resize(3)\n";
+		//this->particule[p].scenario.clear();
+		cout<<"apres scenario.clear()\n";
+	}
+	cout<<"avant this->particule.clear()\n";
+	this->particule.resize(0);
+	cout<<"fin de free_particule\n";
+	
+}
 
 /**
  * Structure ParticleSet : simulation de particules de paramètres fixés
  */
-void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithread, int numscen, int seed, double **stat) {
+void ParticleSetC::dosimulstat(int debut, int npartic, bool dnatrue, bool multithread, int numscen, int seed, double **stat) {
 	int scen=numscen-1;
-	this->npart = npart;
-	int *sOK,ns,k,ii,gr,ipart,nstat,nparam=scenario[scen].nparam;
-	string *ss;
-	sOK = new int[npart];
+	this->npart = npartic;
+	int k,ii,gr,ipart,nstat,nparam=scenario[scen].nparam;
+	//string *ss;
+	vector <int> sOK;
+	sOK = vector<int>(npartic);
 	bool simulfile=false;
-	if (debut<1) init_particule(npart,dnatrue,simulfile,seed);
+	if (debut<1) init_particule(npartic,dnatrue,simulfile,seed);
 	else {
-		for (int p=0;p<this->npart;p++) {
+		for (int p=0;p<npartic;p++) {
 			this->resetparticle(p);
 		}
 	}	
-	for (int p=0;p<this->npart;p++) {
+	for (int p=0;p<npartic;p++) {
 		k=debut+p;
 		if (debuglevel==5) cout<<"p="<<p<<"    k="<<k<<"\n";
 		ii=0;
@@ -251,7 +345,8 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 		
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
-		for (gr=1;gr<groupe.size();gr++)
+		int grmax=(int)groupe.size();
+		for (gr=1;gr<grmax;gr++)
 			if (groupe[gr].type==0) {  //MICROSAT
 				//cout <<"MICROSAT particule "<<p<<"   gr="<<gr<<"   k="<<k<<"   ii="<<ii<<"\n";
 				//cout<<"phistarOK["<<k<<"]["<<ii<<"]="<<phistarOK[k][ii]<<"\n";
@@ -299,7 +394,7 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 	}
 	//if (multithread) cout<<"calcul multithread\n"; else cout<<"pas de calcul multithread\n";
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
-	for (ipart=0;ipart<this->npart;ipart++){
+	for (ipart=0;ipart<npartic;ipart++){
 		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"   avec scenario "<<numscen<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
 		if (debuglevel==5) cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
@@ -309,10 +404,11 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 	}
 	cout<<"after simulation of "<<npart<<" particles (scenario "<<numscen<<")\n";
 ///////////////fin du pragma
-	for (int ipart=0;ipart<this->npart;ipart++) {
+	for (int ipart=0;ipart<npartic;ipart++) {
 		if (sOK[ipart]==0){
 			nstat=0;
 			for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+				//cout<<"gr="<<gr<<"\n";
 				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
 					//cout<<"ipart="<<ipart<<"   gr="<<gr<<"   st="<<st<<"\n";
 /////////////// filtrage des Aml et aml début
@@ -324,15 +420,149 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
 /////////////// filtrage des Aml et aml fin
 					stat[debut+ipart][nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
 					//cout<<"coucou\n";
-					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<enreg[ipart].stat[nstat]<<")  ";
+					//cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<stat[debut+ipart][nstat]<<")  ";
 					nstat++;
 				}
 				//cout<<"\n";
 			}
 		}
 	}
-	delete [] sOK;
+	//cout<<"avant delete sOK \n";
+	//cout<<"sOK size = "<<sOK.size()<<"\n";
+	if (not sOK.empty()) sOK.clear();
 	if (debuglevel==5) cout<<"fin de dosimulstat\n";
+}
+
+/**
+ * Structure ParticleSet : simulation de particules de paramètres fixés deuxième version
+ */
+void ParticleSetC::dosimulstat2(int debut, int npartic, vector < vector <long double> > &phistarOKK, bool dnatrue, bool multithread, int numscen, int seed, double** stat) {
+	//cout<<"debut de dosimulstat2\n";
+	int scen=numscen-1;
+	this->npart = npartic;
+	int k,ii,gr,ipart,nstat,nparam=scenario[scen].nparam;
+	//string *ss;
+	vector <int> sOK;
+	sOK = vector<int>(npartic);
+	bool simulfile=false;
+	if (debut<100) {
+		//cout<<"avant init_particule\n";
+		init_particule(npartic,dnatrue,simulfile,seed);
+	}
+	else {
+		for (int p=0;p<npartic;p++) {
+			this->resetparticle(p);
+		}
+	}
+	for (int p=0;p<npartic;p++) {
+		//k=debut+p;
+		k=p;
+		if (debuglevel==5) cout<<"p="<<p<<"    k="<<k<<"\n";
+		ii=0;
+		for (int i=0;i<nparam;i++) {
+			if (not scenario[scen].histparam[i].prior.constant) {
+				this->particule[p].scenario[scen].histparam[i].value=phistarOKK[k][ii];
+				this->particule[p].scenario[scen].histparam[i].prior.fixed=true;
+				ii++;
+			} else this->particule[p].scenario[scen].histparam[i].value=scenario[scen].histparam[i].prior.mini;
+			if (debuglevel==5) {
+				cout<<scenario[scen].histparam[i].name<<"="<<this->particule[p].scenario[scen].histparam[i].value<<"   ";
+				cout<<"phistar["<<k<<"]["<<ii-1<<"]="<<phistarOKK[k][ii-1]<<"\n";
+			}
+		}
+		
+		if (debuglevel==5) cout<<"\n";
+		//cout<<"apres la copie des paramètres historiques\n";
+		int grmax=(int)groupe.size();
+		for (gr=1;gr<grmax;gr++)
+			if (groupe[gr].type==0) {  //MICROSAT
+				//cout <<"MICROSAT particule "<<p<<"   gr="<<gr<<"   k="<<k<<"   ii="<<ii<<"\n";
+				//cout<<"phistarOKK["<<k<<"]["<<ii<<"]="<<phistarOKK[k][ii]<<"\n";
+				if (not groupe[gr].priormutmoy.constant) {
+					//cout<<" priormutmoy non constant "<<phistarOKK[k][ii]<<" \n";
+					this->particule[p].grouplist[gr].mutmoy = phistarOKK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priormutmoy.fixed=true;
+				}
+			//cout<<this->particule[p].grouplist[gr].mutmoy<<"\n";
+				//cout<<"phistarOKK["<<k<<"]["<<ii<<"]="<<phistarOKK[k][ii]<<"    ";
+				if (not groupe[gr].priorPmoy.constant)   {
+					//cout<<" priorPmoy non constant "<<phistarOKK[k][ii]<<" \n";
+					this->particule[p].grouplist[gr].Pmoy  =  phistarOKK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priorPmoy.fixed=true;
+				}
+				//cout<<this->particule[p].grouplist[gr].Pmoy<<"\n";
+				//cout<<"phistarOKK["<<k<<"]["<<ii<<"]="<<phistarOKK[k][ii]<<"    ";
+				if (not groupe[gr].priorsnimoy.constant) {
+					//cout<<" priorsnimoy non constant "<<phistarOKK[k][ii]<<" \n";
+					this->particule[p].grouplist[gr].snimoy = phistarOKK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priorsnimoy.fixed=true;
+				}
+				//cout<<this->particule[p].grouplist[gr].snimoy<<"\n";
+			}
+			else if (groupe[gr].type==1) {       //SEQUENCES
+				//cout<<"SEQUENCE\n";
+				if (not groupe[gr].priormusmoy.constant) {         //musmoy
+					this->particule[p].grouplist[gr].musmoy = phistarOKK[k][ii];ii++;
+					this->particule[p].grouplist[gr].priormusmoy.fixed=true;
+				}   
+				if (groupe[gr].mutmod>0){
+					if (not groupe[gr].priork1moy.constant){        //k1moy
+						this->particule[p].grouplist[gr].k1moy =phistarOKK[k][ii];ii++;
+						this->particule[p].grouplist[gr].priork1moy.fixed=true;
+					}
+				}
+				if (groupe[gr].mutmod>2){
+					if (not groupe[gr].priork2moy.constant){        //k2moy
+						this->particule[p].grouplist[gr].k2moy =phistarOKK[k][ii];ii++;
+						this->particule[p].grouplist[gr].priork2moy.fixed=true;
+					}
+				}
+			}
+		//cout<<"\n";
+	}
+	//if (multithread) cout<<"calcul multithread\n"; else cout<<"pas de calcul multithread\n";
+#pragma omp parallel for shared(sOK) private(gr) if(multithread)
+	for (ipart=0;ipart<npartic;ipart++){
+		if (debuglevel==5) cout <<"avant dosimulpart de la particule "<<ipart<<"   avec scenario "<<numscen<<"\n";
+		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
+		if (debuglevel==5) cout<<sOK[ipart]<<" apres dosimulpart de la particule "<<ipart<<"\n";
+		if (sOK[ipart]==0) {
+			for(gr=1;gr<this->particule[ipart].ngr;gr++) {
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++)this->particule[ipart].grouplist[gr].sumstat[st].val=0.0;				
+				this->particule[ipart].docalstat(gr);
+			}
+		}
+	}
+	if (debuglevel==5) cout<<"after simulation of "<<npart<<" particles (scenario "<<numscen<<")    ";
+///////////////fin du pragma
+	for (int ipart=0;ipart<npartic;ipart++) {
+		if (sOK[ipart]==0){
+			nstat=0;
+			for(int gr=1;gr<this->particule[ipart].ngr;gr++){
+				//cout<<"gr="<<gr<<"    stat.size = "<<stat[ipart].size()<<"      nstat = "<<this->particule[ipart].grouplist[gr].nstat<<"\n";
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++){
+					//if ((ipart<5)and(nstat<5)) cout<<"ipart="<<ipart<<"   gr="<<gr<<"   st="<<st<<"      ";
+/////////////// filtrage des Aml et aml début
+					if (this->particule[ipart].grouplist[gr].sumstat[st].val==-9999.0){
+						if ((this->particule[ipart].grouplist[gr].sumstat[st].cat==12)or(this->particule[ipart].grouplist[gr].sumstat[st].cat==-14))
+							this->particule[ipart].grouplist[gr].sumstat[st].val=0.5;
+					}
+					//cout<<"avant la fin du filtrage ipart="<<ipart<<"   nstat="<<nstat<<"\n";
+/////////////// filtrage des Aml et aml fin
+					stat[ipart][nstat]=this->particule[ipart].grouplist[gr].sumstat[st].val;
+					//cout<<"coucou\n";
+					//if ((ipart<5)and(nstat<5)) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<" ("<<stat[ipart][nstat]<<")  \n";
+					nstat++;
+				}
+				if ((ipart<5)and(nstat<5)) cout<<"\n";
+			}
+		}
+	}
+	//cout<<"avant delete sOK \n";
+	//cout<<"sOK size = "<<sOK.size()<<"\n";
+	if (not sOK.empty()) sOK.clear();
+	//free_particule(npartic);
+	if (debuglevel==5) cout<<"fin de dosimulstat2\n";
 }
 
 /**
@@ -340,7 +570,7 @@ void ParticleSetC::dosimulstat(int debut, int npart, bool dnatrue, bool multithr
  */
 void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool firsttime, int numscen,int seed,int nsel) {
 	int scen=numscen-1;
-	int ii,ip1,ip2,ipart,gr,nstat,k,nparam=scenario[scen].nparam,nm,np,iscen,categ;
+	int ii,ipart,gr,nstat,k,nparam=scenario[scen].nparam,np,iscen,categ;
 	bool simulfile=false;
 	this->npart = npart;
 	int ns;
@@ -370,7 +600,8 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 		}
 		if (debuglevel==5) cout<<"\n";
 		//cout<<"apres la copie des paramètres historiques\n";
-		for (gr=1;gr<groupe.size();gr++)
+		int grmax=(int)groupe.size();
+		for (gr=1;gr<grmax;gr++)
 			if (groupe[gr].type==0) {  //MICROSAT
 				//cout <<"MICROSAT "<<p<<"\n";
 				//cout<<"phistar["<<k<<"]["<<ii<<"]="<<phistar[k][ii]<<"    \n";
@@ -417,14 +648,14 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 	//if (num_threads>0) omp_set_num_threads(num_threads);_
 #pragma omp parallel for shared(sOK) private(gr) if(multithread)
 	for (ipart=0;ipart<this->npart;ipart++){
-		//cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
+		cout <<"avant dosimulpart de la particule "<<ipart<<"\n";
 		sOK[ipart]=this->particule[ipart].dosimulpart(numscen);
-		//cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
+		cout<<sOK[ipart]<<"apres dosimulpart de la particule "<<ipart<<"\n";
 		if (sOK[ipart]==0) {
 			for(gr=1;gr<this->particule[ipart].ngr;gr++) {
 				this->particule[ipart].docalstat(gr);
-				//cout<<"statistiques de la particules : \n";
-				//for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"  ";cout<<"\n";
+				cout<<"statistiques de la particules : \n";
+				for (int st=0;st<this->particule[ipart].grouplist[gr].nstat;st++) cout<<this->particule[ipart].grouplist[gr].sumstat[st].val<<"\n";
 			}
 		}
 	}
@@ -529,9 +760,9 @@ void ParticleSetC::dosimulphistar(int npart, bool dnatrue,bool multithread,bool 
 	//cout<<"fin de dosimulphistar\n";
 }
 
-void ParticleSetC::libere(int npart) {
+/*void ParticleSetC::libere(int npart) {
 
-}
+}*/
 
 
 /**
@@ -711,7 +942,7 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
 	} else {
 		if (depuis != 0) {
 			FILE * pFile;
-			int categ,iq,icur=0;
+			int categ,iq;
 			bool trouve2;
 			pFile = fopen (scurfile.c_str(),"a");
 			splitwords(header.entete," ",ss); ns = ss.size();
@@ -773,7 +1004,7 @@ void ParticleSetC::dosimultabref(int npart, bool dnatrue,bool multithread,bool f
  * Structure ParticleSet : simulation des particules utilisées pour la création de fichiers genepop
  */
 string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
-	bool dnatrue=true;
+	bool dnatrue=true,simulfile=true;
 	int numscen=1;
 	this->npart=npart;
 	int *sOK;
@@ -782,14 +1013,16 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
 	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
-	for (int p=0;p<this->npart;p++) {
+	dataobs = datasim;
+	init_particule(npart,dnatrue,simulfile,seed);
+	/*for (int p=0;p<this->npart;p++) {
 		this->particule[p].dnatrue = dnatrue;
 		//this->setdata(p);//cout<<"apres setdata\n";
 		this->setgroup(p);//cout<<"apres setgroup\n";
 		this->setloci(p);//cout<<"apres setloci\n";
 		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
-	}
+	}*/
 	cout<<"avant omp\n";
 #pragma omp parallel for shared(sOK) if(multithread)
 	for (int ipart=0;ipart<this->npart;ipart++){
@@ -806,7 +1039,6 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
  * Structure ParticleSet : simulation des particules utilisées pour la création de fichiers SNP
  */
 string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
-	bool dnatrue=true;
 	int numscen=1;
 	this->npart=npart;
 	int *sOK;
@@ -815,8 +1047,9 @@ string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
 	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
 	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
+	dataobs=datasim;
+	//cout<<"apres dataobs=datasim\n";
 	for (int p=0;p<this->npart;p++) {
-		//this->particule[p].dnatrue = dnatrue;
 		this->particule[p].maf = datasim.maf;
 		//this->setdata(p);//cout<<"apres setdata\n";
 		//this->setgroup(p);cout<<"apres setgroup\n"; // Je supprime cette ligne car pas de groupe de locus dans les parties simul de jeux de donnees. Pierre
@@ -826,9 +1059,9 @@ string* ParticleSetC::simuldataSNP(int npart, bool multithread, int seed) {
 			this->particule[p].grouplist[gr].type=2;
 			this->particule[p].grouplist[gr].nloc=groupe[gr].nloc;
 			
-		} cout<<"avant setloci\n";
-		this->setloci(p);cout<<"apres setloci\n";
-		this->setscenarios(p,true);cout<<"apres setscenario\n";
+		} //cout<<"avant setloci\n";
+		this->setloci(p);//cout<<"apres setloci\n";
+		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
 	}
 	//cout<<"avant omp\n";
