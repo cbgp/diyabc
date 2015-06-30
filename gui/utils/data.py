@@ -691,7 +691,7 @@ class DataSnp(DataAbstract):
         # taille des populations
         self.nind = []
         self.nind_hash = {}
-        self.commentValuesDict = {'maf' : 'HUDSON'}
+        self.commentValuesDict = {'maf' : 'hudson'}
                                   #'nm'  : "1.0nf"}
         self.__readData(writeMafFile=False)
 
