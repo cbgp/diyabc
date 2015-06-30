@@ -304,7 +304,7 @@ class ProjectSnp(ProjectReftable):
             if str(self.data.commentValuesDict['maf']).lower() == "hudson" :
                 if self.data.nloctot != self.data.nloc :
                     output.notify(self,"Monomorphic Loci warning","Your dataset includes a fraction of monomorphic loci :\n\nONLY POLYMORPHIC LOCI WILL BE CONSIDERED AFTERWARDS.")
-                self.ui.dataFileInfoLabel.setText("MAF = HUDSON   : %s polymorphic loci  + %s monomorphic loci\n%s individuals in %s samples\n%s" % \
+                self.ui.dataFileInfoLabel.setText("MAF = hudson   : %s polymorphic loci  + %s monomorphic loci\n%s individuals in %s samples\n%s" % \
                                                 (self.data.nloc,(self.data.nloctot-self.data.nloc),self.data.nindtot,self.data.nsample,typestr))
             else :
                 self.ui.dataFileInfoLabel.setText("MAF = %s  : %s loci fitting the  MAF (over %s)\n%s individuals in %s samples\n%s" % \
