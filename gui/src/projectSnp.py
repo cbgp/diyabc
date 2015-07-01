@@ -11,7 +11,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from projectReftable import ProjectReftable
 from summaryStatistics.setSummaryStatisticsSnp import SetSummaryStatisticsSnp
-from utils.data import DataSnp
+from utils.data import DataSnp, DataAbstract
 import output
 from controlAscertBias import ControlAscertBias
 import variables
@@ -43,6 +43,35 @@ class ProjectSnp(ProjectReftable):
 
         QObject.connect(self.ui.ascertButton,SIGNAL("clicked()"),self.setAscertBias)
 
+    @pyqtSignature("")
+    def launchReftableGeneration(self):
+        # SNP Tests remove bin and bin.txt if no reftable was generated + check if MAF was modified
+        dataFile = str(self.ui.dataFileEdit.text())
+        if int(self.ui.nbSetsDoneEdit.text() )< 1 or not os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)):
+            log(3,"No reftable.bin found, try to remove %s and %s"%(dataFile+".bin", dataFile+"bin.txt"))
+            if os.path.exists(dataFile+".bin") :
+                os.remove(dataFile+".bin")
+                log(3, "%s removed" % (dataFile+".bin"))
+            if os.path.exists(dataFile+"bin.txt") :
+                os.remove(dataFile+"bin.txt")
+                log(3, "%s removed" % (dataFile+"bin.txt"))
+        else :
+            f=open(dataFile.encode(self.fsCoding),'r')
+            words = f.readline().strip().split()
+            f.close()
+            commentWordsDict = DataAbstract.getParseCommentWordsDict(words)
+            f=open((os.path.join(self.dir,"maf.txt")).encode(self.fsCoding),'r')
+            maf = f.readline().strip().lower()
+            f.close()
+            if "hudson" in maf :
+                maf = "hudson"
+            else :
+                maf = str(float(maf))
+                commentWordsDict["maf"] = str(float(commentWordsDict["maf"]))
+            if str(commentWordsDict["maf"]) != maf :
+                output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
+                return
+        super(ProjectSnp, self).launchReftableGeneration()
 
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"

@@ -146,6 +146,7 @@ class LocusGroupList(list):
         else :
             raise ValueError , "This is not a locus group"
 class DataAbstract(object):
+
     def __init__(self):
         pass
     def _parseCommentWords(self,words):
@@ -153,6 +154,14 @@ class DataAbstract(object):
             if len(word) > 3 and word[0] == '<' and "=" in word and word[-1] == '>' :
                 valName, val = word.split("=")
                 self.commentValuesDict[valName[1:].lower()] = val[:-1].lower()
+    @staticmethod
+    def getParseCommentWordsDict(words):
+        parseCommentWordsDict= {}
+        for word in words :
+            if len(word) > 3 and word[0] == '<' and "=" in word and word[-1] == '>' :
+                valName, val = word.split("=")
+                parseCommentWordsDict[valName[1:].lower()] = val[:-1].lower()
+        return parseCommentWordsDict
 
 class Data(DataAbstract):
     ''' this class describes an extended genepop format data set and read it from file'''
