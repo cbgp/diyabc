@@ -645,10 +645,9 @@ vector <int> melange2(MwcGen mw, int k, int n) {
 			//fpar<<this->grouplist[gr].mutmoy<<'\t'<<this->grouplist[gr].Pmoy<<'\n';
 		  }
 		  if (this->grouplist[gr].type==1) {  //sequence
-				if (not this->grouplist[gr].priormusmoy.fixed) this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);
+				if (not this->grouplist[gr].priormusmoy.fixed) {cout<<"not priormusmoy.fixed\n";this->grouplist[gr].musmoy = this->grouplist[gr].priormusmoy.drawfromprior(this->mw);}
 				if (not this->grouplist[gr].priormusmoy.constant) {		
 					this->scen.paramvar[this->scen.ipv]=this->grouplist[gr].musmoy;
-					//cout<<"musmoy ipv++\n";
 					this->scen.ipv++;
 				}
 				if (this->grouplist [gr].mutmod>0){
@@ -1944,7 +1943,7 @@ void ParticleC::put_one_mutation(int loc) {
 	  if (debuglevel==5) cout <<"avant checktree\n";
 	  if (debuglevel==10) cout <<"avant verifytree\n";
 	  checktree=this->verifytree();
-	  //cout<<"apres verifytree checktree="<<checktree<<"\n";
+	  if (debuglevel==10) cout<<"apres verifytree checktree="<<checktree<<"\n";
 	  if (debuglevel==10) cout <<"apres verifytree\n";
 	  if (checktree!="") {
 		  if (this->drawuntil){
@@ -2355,7 +2354,7 @@ void ParticleC::put_one_mutation(int loc) {
   /***********************************************************************************************************************/
 
   string ParticleC::dogenepop(){
-	  cout<<"début de ParticuleC::dogenepop\n";
+	  //cout<<"début de ParticuleC::dogenepop\n";
 	  string sgp,sind,snum,ssr;
 	  int iloc,*k,ty;
 	  k = new int[this->nloc];

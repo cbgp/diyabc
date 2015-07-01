@@ -350,7 +350,7 @@ void HistParameterC::ecris(bool simulfile){
 		this->priormusloc = source.priormusloc;
 		if (this->mutmod>0) {
 			this->k1moy = source.k1moy;
-			this->priork1loc = source.priork1loc;
+			this->priork1moy = source.priork1moy;
 			this->priork1loc = source.priork1loc;
 		}
 		if (this->mutmod>2) {

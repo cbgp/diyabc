@@ -168,7 +168,7 @@ public:
 	/**
 	 * ecriture en binaire d'un fichier snp
 	 */
-	void ecribin(std::string filenamebin);
+	void ecribin(std::string filenamebin,std::string filenametxt);
 	/**
 	 * lecture en binaire d'un fichier snp
 	 */

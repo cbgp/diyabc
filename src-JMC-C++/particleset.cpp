@@ -50,7 +50,7 @@ void ParticleSetC::setgroup(int p) {
 	this->particule[p].ngr = ngr;
 	if(not this->particule[p].grouplist.empty()) this->particule[p].grouplist.clear();
 	this->particule[p].grouplist = vector <LocusGroupC>(ngr);
-	for (int gr=0;gr<ngr;gr++) this->particule[p].grouplist[gr] = groupe[gr];
+	for (int gr=1;gr<ngr;gr++) this->particule[p].grouplist[gr] = groupe[gr];
 	//cout<<"Dans Particleset setgroup("<<p<<") groupe[1].mutmoy="<<groupe[1].mutmoy<<"\n";
 	for (int gr=1;gr<ngr;gr++) {
 		//particuleobs.grouplist[gr] = groupe[gr];
@@ -1012,7 +1012,7 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
 	sOK = new int[npart];
 	this->particule = vector<ParticleC>(this->npart);
 	ss = new string[npart];
-	cout<<"avant le remplissage des "<<this->npart<<" particules\n";
+	//cout<<"avant le remplissage des "<<this->npart<<" particules\n";
 	dataobs = datasim;
 	init_particule(npart,dnatrue,simulfile,seed);
 	/*for (int p=0;p<this->npart;p++) {
@@ -1023,7 +1023,7 @@ string* ParticleSetC::simulgenepop(int npart, bool multithread, int seed) {
 		this->setscenarios(p,true);//cout<<"apres setscenario\n";
 		this->particule[p].mw.randinit(p,seed);
 	}*/
-	cout<<"avant omp\n";
+	//cout<<"avant omp\n";
 #pragma omp parallel for shared(sOK) if(multithread)
 	for (int ipart=0;ipart<this->npart;ipart++){
 		sOK[ipart] = this->particule[ipart].dosimulpart(numscen);

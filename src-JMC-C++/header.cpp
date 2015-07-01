@@ -1567,9 +1567,8 @@ int HeaderC::readHeadersimGroupPrior(std::ifstream & file){
 				groupe[gr].k1moy  = atof(ss1[1].c_str());
 				groupe[gr].priork1moy.fixed=true;groupe[gr].priork1moy.constant=true;
 				getline(file,s1);splitwords(s1," ",ss1); groupe[gr].priork1loc.readprior(ss1[1]);
-				getline(file,s1);splitwords(s1," ",ss1); 
+				getline(file,s1);splitwords(s1," ",ss1);			
 			}
-
 			if (ss1[0]!="MODEL") {
 				groupe[gr].k2moy  = atof(ss1[1].c_str());
 				groupe[gr].priork2moy.fixed=true;groupe[gr].priork2moy.constant=true;
