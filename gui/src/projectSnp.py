@@ -71,6 +71,7 @@ class ProjectSnp(ProjectReftable):
             if str(commentWordsDict["maf"]) != maf :
                 output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
                 return
+        self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
         super(ProjectSnp, self).launchReftableGeneration()
 
     def getDataFileFilter(self):
@@ -322,7 +323,7 @@ class ProjectSnp(ProjectReftable):
         #if not isUnixText(name):
         #    dos2unix(name)
         buttonPreviousText = self.runReftableButton.text()
-        self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
+        self.runReftableButton.setText("Checking data file format : please wait")
         try:
             self.data = DataSnp(name)
             typestr = ""

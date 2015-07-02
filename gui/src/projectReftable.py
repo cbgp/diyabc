@@ -527,16 +527,22 @@ class ProjectReftable(Project):
         """
         log(3,"[project %s] Reference table generation progress file content has changed : %s"%(self.name,str(progressFileContent).replace('\n',' ')))
         lines = str(progressFileContent).split('\n')
-        if len(lines) > 2:
-            if lines[0].strip() != "OK" and lines[0].strip() != "END":
-                self.reftableProblem("Executable says there is a problem in the progress file (%s)"%lines[0].strip())
+        try :
+            if len(lines) > 2:
+                if lines[0].strip() != "OK" and lines[0].strip() != "END":
+                    self.reftableProblem("Executable says there is a problem in the progress file (%s)"%lines[0].strip())
+                    return
+                done = int(lines[1])
+                time_remaining = lines[2]
+            else:
+                #self.reftableProblem("Progress file parsing error")
+                log(3,"Progress file parsing error, number of lines < 3")
                 return
-            done = int(lines[1])
-            time_remaining = lines[2]
-        else:
-            #self.reftableProblem("Progress file parsing error")
-            log(3,"Progress file parsing error, number of lines < 3")
-            return
+        except Exception :
+            log(3,"Progress file parsing error, unknown error")
+            time_remaining = "unknown"
+            done = int(str(self.ui.nbSetsDoneEdit.text()))
+            pass
 
         nb_to_do = self.th.nb_to_gen
         self.ui.runReftableButton.setText("Running ... %s remaining"%(time_remaining.replace('\n',' ')))
@@ -555,10 +561,14 @@ class ProjectReftable(Project):
     def reftableTermSuccess(self):
         # si on a fini, on met à jour l'affichage de la taille de la reftable
         # et on verrouille eventuellement histmodel et gendata
-        log(2,"reference table generation of project %s finished with success"%self.name)
+        log(2,"reference table generation of project %s finished with a success code"%self.name)
         self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
         self.putRefTableSize()
         self.stopUiGenReftable()
+        if int(str(self.ui.nbSetsDoneEdit.text())) != int(str(self.ui.nbSetsReqEdit.text())) :
+            log(1,"reference table generation of project %s finished with a success code but the number of data sets asked are not done."%self.name)
+            output.notify(self,"Generation Error","Reference table generation of project %s finished with a success code. \
+            \nBut the number of wanted data sets are not done. Maybe you asked to much simulated data sets."%self.name)
         self.th = None
         self.nextAnalysisInQueue()
 
