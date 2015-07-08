@@ -631,13 +631,14 @@ def getFsEncoding(logLevel=False):
                 fSCoding = locale.getpreferredencoding()
                 log(logLevel,"File system encoding set to system preferred encoding : %s" % fSCoding)
             else :
-                fSCoding = u"UTF-8"
+                fSCoding = "iso-8859-1" # "u"UTF-8"
                 log(logLevel,"Unable to determine file system encoding. Set to default encoding : %s" % fSCoding)
         else :
             log(logLevel,"File system encoding set from LC_ALL : %s" % fSCoding)
     else :
         log(logLevel,"File system encoding : %s" % fSCoding)
     return fSCoding
+
 
 
 

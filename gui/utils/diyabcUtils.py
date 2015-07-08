@@ -41,4 +41,4 @@ def readNbRecordsOfScenario(reftablefile,numSc):
     else:
         return None
 
-
+def
