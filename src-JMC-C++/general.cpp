@@ -223,7 +223,7 @@ try {
     debut=walltime(&clock_zero);
     srand (time(NULL));
     seed = rand() % 1000;
-	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:R:F:")) !=-1) {
+	while((optchar = getopt(argc,argv,"i:p:z:r:e:s:b:c:qkf:g:d:hmqj:a:t:n:w:xyl:o:R:F:Q")) !=-1) {
 	  if (optarg!=NULL) soptarg = string(optarg);
 	  switch (optchar) {
 
@@ -234,6 +234,7 @@ try {
             cout << "-g <minimum number of particles simulated in a single bunch (default=100)>\n";
             cout << "-m <multithreaded version of the program\n";
             cout << "-q to merge all reftable_$j.bin \n";
+            cout << "-Q to merge all reftableRF_$j.bin \n";
             cout << "-s <seed for the random generator (deprecated!!!)>\n"; // TODO: à changer en identité dans le cluster
             cout << "-t <required number of threads>\n";
             cout << "-w <computer's number if in a cluster (0 by default) >\n";
@@ -318,7 +319,7 @@ try {
             cout << "           t:<number of the transformation (1,2,3 or 4)>\n";
             cout << "           v:<list of summary stat names separated by a comma (if empty keep those of reftable)>\n";
 
-            cout << "\n-k for SIMULATE GENEPOP DATA FILES\n";
+            cout << "\n-k to SIMULATE DATA FILES\n";
 			cout << "\n-o to simulate summary statistics from a text file containing scenario and parameter values\n";
 			cout << "\n-R <number of required data sets in a reftable file (reftableRF.bin) with all possible summary statistics> (also produces a corresponding statobsRF.txt)\n";
 			action = 'h';
@@ -338,20 +339,20 @@ try {
             flagi=true;
             break;
 
-		case 'o' :
-			paramfilename = soptarg;
-			action = 'o';
-			break;
+	case 'o' :
+		paramfilename = soptarg;
+		action = 'o';
+		break;
 		
-		case 'p' :
-			headerfilename = soptarg + "header.txt";
-			headersimfilename = soptarg + "headersim.txt";
-			reftablefilename =  soptarg + "reftable.bin";
-			reftablelogfilename =  soptarg + "reftable.log";
-			statobsfilename = soptarg + "statobs.txt";
-			stopfilename = soptarg + ".stop";
-			reftabscen = soptarg + "reftabscen.txt";
-			path = soptarg;
+	case 'p' :
+		headerfilename = soptarg + "header.txt";
+		headersimfilename = soptarg + "headersim.txt";
+		reftablefilename =  soptarg + "reftable.bin";
+		reftablelogfilename =  soptarg + "reftable.log";
+		statobsfilename = soptarg + "statobs.txt";
+		stopfilename = soptarg + ".stop";
+		reftabscen = soptarg + "reftabscen.txt";
+		path = soptarg;
             flagp=true;
             if (stat(stopfilename.c_str(),&stFileInfo)==0) remove(stopfilename.c_str());
             break;
@@ -409,10 +410,10 @@ try {
             break;
 
         case 'F' :
-			randforpar = soptarg;
-            randomforest=true;
-			reftablefilename= path + "reftableRF.bin";
-			statobsfilename = path + "statobsRF.txt";
+	  randforpar = soptarg;
+	  randomforest=true;
+	  reftablefilename= path + "reftableRF.bin";
+	  statobsfilename = path + "statobsRF.txt";
             action='F';
             break;
 
@@ -431,7 +432,11 @@ try {
 			action='q';
             break;
 
-        case 'j' :
+         case 'Q' :
+			action='Q';
+            break;
+
+       case 'j' :
 			modpar = soptarg;
             action='j';
             break;
@@ -474,7 +479,7 @@ try {
      if (num_threads>0) omp_set_num_threads(num_threads);
 
      /* Debut: pour le nouveau RNG      */
-     if ((action != 'n') and (action != 'h') and (action != 'a') and (action !='q') and (action !='z')){
+     if ((action != 'n') and (action != 'h') and (action != 'a') and (action !='q') and (action !='Q') and (action !='z')){
     	 // Je dois lire l'état courant des RNG
     	 mtss = NULL;
 
@@ -704,10 +709,18 @@ try {
                    domodchec(modpar,seed);
                    break;
 				   
-	   case 'q'   : //header.readHeader(headerfilename);
-				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
-				  rt.concat();
-				  break;
+      case 'q'   : //header.readHeader(headerfilename);
+		    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
+		    rt.concat();
+		    break;
+		    
+      case 'Q'   : //header.readHeader(headerfilename);
+		    randomforest=true;
+		    reftablefilename= path + "reftableRF.bin";
+		    statobsfilename = path + "statobsRF.txt";
+		    k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
+		    rt.concat2();
+		    break;
 	   case 'x'  :
 				  k=rt.readheader(reftablefilename,reftablelogfilename,reftabscen);
 				  rt.bintotxt();

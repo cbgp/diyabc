@@ -94,7 +94,8 @@ public:
 	void bintotxt2();
 	void bintocsv(HeaderC const & header);
     void concat();
-    // calcule les variances des statistiques résumées
+    void concat2();
+   // calcule les variances des statistiques résumées
     // sur les 100000 premiers enregistrements de la table de référence
     int cal_varstat();
     // alloue / desalloue la mémoire pour enrsel

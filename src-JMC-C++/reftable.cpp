@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <dirent.h>
 
 #include "randomgenerator.h"
 #include "mesutils.h"
@@ -240,6 +241,7 @@ int ReftableC::writerecords(int nenr, enregC *enr) {
 }
 
 int ReftableC::openfile() {
+	cout<<"\nOuverture du fichier\n"<<this->filename<<"\n\n";
 	this->fifo.open(this->filename.c_str(),ios::in|ios::out|ios::binary);
 	return 0;
 }
@@ -353,7 +355,11 @@ int ReftableC::testfile(string reftablefilename, int npart) {
 
 
 int ReftableC::closefile() {
+        int size;
+	this->fifo.seekp(0,ios::end);
+	size=this->fifo.tellp();
 	this->fifo.close();
+	cout<<"\nfermeture du fichier "<<this->filename<<" taille="<<size<<"\n\n";
 	return 0;
 }
 
@@ -480,80 +486,173 @@ void ReftableC::bintocsv(HeaderC const & header) {
 }
 
 void ReftableC::concat() {
-	cout<<"debut de concat\n";
-	char extbin[]=".bin\0";
-	char extlog[]=".log\0";
-	int i,n,nu=1,nrecc,*nrecscenc,size,ns;
-	bool premier=true;
-	this->openfile();
-	char* reftabname = new char[ this->filename.length()+10];
-	char* reflogname = new char[this->filename.length()+10];
-	char* reftab = new char[ this->filename.length()+1];
-	strcpy(reftab,this->filename.c_str());
-	i=strlen(this->filename.c_str());
-	while (this->filename.c_str()[i]!='.') i--;
-	reftab[i]='\0';
-	char* num = new char[9];
-	n=sprintf (num, "_%d",nu++);if (n<0) cout<<"probleme dans concat() \n";
-	strcpy(reftabname,reftab);
-	strcat(reftabname,num);
-	cout<<reftabname<<"\n";
-
-	strcpy(reflogname,reftabname);
-	strcat(reftabname,extbin);strcat(reflogname,extlog);
-	cout<<reftabname<<"\n";
-	//cout<<reflogname<<"\n";
-	fstream f0(reftabname,ios::in|ios::binary);
-	if(f0) {f0.close();i=rename(reftabname,this->filename.c_str());}
-	else {cout <<" no file to concatenate\n";exit(1);}
-	i=rename(reflogname,this->filelog.c_str());
-	cout <<reftabname<<"\n";
-	cout<<reflogname<<"\n";
-	cout<<this->filename<<"\n";
-	this->openfile2();this->closefile();
-	this->openfile();
-	for (nu=2;nu<50000;nu++) {
-		n=sprintf (num, "_%d",nu);
-		strcpy(reftabname,reftab);
-		strcat(reftabname,num);strcpy(reflogname,reftabname);
-		strcat(reftabname,extbin);strcat(reflogname,extlog);
-		fstream f0(reftabname,ios::in|ios::binary);
-		if(f0) {
-			cout<<reftabname<<"\n";
-			cout <<reftabname<<"\n";
-			f0.seekp(0,ios::end);size=f0.tellp();
-			f0.seekp(0,ios::beg);
-			//cout<<"position ="<<f0.tellp()<<"   size = "<<size<<"\n";
-			char* buffer = new char[size];
-			f0.read((char*)&(nrecc),sizeof(int));this->nrec +=nrecc;size -=4;
-			//cout<<"nrecc="<<nrecc<<"\n";
-			f0.read((char*)&(ns),sizeof(int));size -=4;
-			//cout<<"nscen="<<ns<<"\n";
-			if (premier) nrecscenc = new int[ns];
-			for (int i=0;i<ns;i++) {f0.read((char*)&(nrecscenc[i]),sizeof(int));size -=4;this->nrecscen[i] +=nrecscenc[i];/*cout<<"scenario "<<i<<"   "<<this->nrecscen[i]<<"\n";*/}
-			for (int i=0;i<ns;i++) {f0.read((char*)&(nrecscenc[i]),sizeof(int));size -=4;/*cout<<"scenario "<<i<<"   nparam = "<<nrecscenc[i]<<"\n";*/}
-			f0.read((char*)&ns,sizeof(int));size -=4;/*cout<<"nstat = "<<ns<<"\n";*/
-			f0.read(buffer,size);
-			//cout<<"size final ="<<size<<"\n";
-			f0.close();
-			remove(reftabname);remove(reflogname);
-			this->fifo.seekp(0,ios::end);this->fifo.write(buffer,size);
-			this->fifo.seekp(0,ios::beg);
-			this->fifo.write((char*)&(this->nrec),sizeof(int));
-			this->fifo.seekp(8,ios::beg);
-			for (int i=0;i<this->nscen;i++) this->fifo.write((char*)&(this->nrecscen[i]),sizeof(int));
-			ofstream f1(this->filelog.c_str(),ios::out);
-			f1<<"OK\n";
-			f1<<this->nrec<<"\n";
-			f1.close();
-			delete [] buffer;
-		}
+	DIR* dir = opendir(path.c_str());
+	struct dirent* entry; 
+	cout<<"debut de concat2\n";
+	vector <string> reftabname,pathreftabname;
+	//vector <string> reflogname;
+	string dname;
+	int nf,ns,size,nrecc;
+	vector <int> nrecscenc;
+	while ((entry = readdir(dir)) != NULL) {
+	    dname=entry->d_name;
+	    if ((dname.find("reftable_") !=string::npos)and(dname.find(".bin")!=string::npos)) {
+	      pathreftabname.push_back(path+entry->d_name);
+	      reftabname.push_back(entry->d_name); 
+	    }
+;	}
+	nf = (int)reftabname.size();
+	cout<<nf<<" fichiers trouvés\n";
+	if (nf==0) {
+	  cout<<"aucun fichier trouvé. Programme terminé.\n";
+	  exit(1);
 	}
-	this->fifo.close();
-	delete [] reftabname;
-	delete [] reftab;
-	delete [] reflogname;
-	delete [] num;
+	if (nf==1) {
+	  cout <<"un seul fichier trouvé. Pas de concaténation. Programme terminé.\n";
+	  exit(1);
+	}
+	if (nf>1) {
+	  fstream f1;
+	  f1.open(this->filename.c_str(),ios::out|ios::binary);
+	  cout<<"lecture du fichier "<<reftabname[0]<<"\n";
+	  fstream f0(pathreftabname[0].c_str(),ios::in|ios::binary);
+	  f0.seekp(0,ios::end);
+	  size=f0.tellp();
+	  f0.seekp(0,ios::beg);
+	  char* buffer = new char[size];
+	  f0.read((char*)&(this->nrec),sizeof(int));size -=4;
+	  f1.write((char*)&(this->nrec),sizeof(int));
+	  f0.read((char*)&(this->nscen),sizeof(int));size -=4;
+	  f1.write((char*)&(this->nscen),sizeof(int));	  
+	  this->nrecscen = vector <int>(this->nscen);
+	  nrecscenc = vector <int>(this->nscen);
+	  for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));size -=4;}
+	  for (int i=0;i<this->nscen;i++) f1.write((char*)&(this->nrecscen[i]),sizeof(int));
+	  f0.read(buffer,size);
+	  f1.write(buffer,size);
+	  f0.close();//remove(reftabname[0].c_str());
+	  delete [] buffer;
+	  for (int ifich=1;ifich<nf;ifich++) {
+	    cout<<"lecture du fichier "<<reftabname[ifich]<<"\n";
+	    fstream f0(pathreftabname[ifich].c_str(),ios::in|ios::binary);
+	    f0.seekp(0,ios::end);
+	    size=f0.tellp();
+	    f0.seekp(0,ios::beg);
+	    char* buffer = new char[size];
+	    f0.read((char*)&(nrecc),sizeof(int));this->nrec +=nrecc;size -=4;
+	    f0.read((char*)&(ns),sizeof(int));size -=4;
+	    for (int i=0;i<ns;i++) {
+	      f0.read((char*)&(nrecscenc[i]),sizeof(int));
+	      size -=4;
+	      this->nrecscen[i] +=nrecscenc[i];
+	    }
+	    for (int i=0;i<ns;i++) {f0.read((char*)&(nrecscenc[i]),sizeof(int));size -=4;/*cout<<"scenario "<<i<<"   nparam = "<<nrecscenc[i]<<"\n";*/}
+	    f0.read((char*)&ns,sizeof(int));size -=4;/*cout<<"nstat = "<<ns<<"\n";*/
+	    f0.read(buffer,size);
+	    f0.close();//remove(reftabname[ifich].c_str());
+	    f1.seekp(0,ios::end);f1.write(buffer,size);
+	    f1.seekp(0,ios::beg);
+	    f1.write((char*)&(this->nrec),sizeof(int));
+	    f1.seekp(8,ios::beg);
+	    for (int i=0;i<this->nscen;i++) f1.write((char*)&(this->nrecscen[i]),sizeof(int));
+	    ofstream f2(this->filelog.c_str(),ios::out);
+	    f2<<"OK\n";
+	    f2<<this->nrec<<"\n";
+	    f2.close();
+	    delete [] buffer;
+	  }
+	  f1.close();
+	  cout<<nf<<" fichiers ont été concaténés. Le fichier résultant reftableRF.bin comprend "<<this->nrec<<" datasets.\n";
+	}
+	if (not reftabname.empty()) reftabname.clear();  
+	if (not nrecscenc.empty()) nrecscenc.clear();  
+}
+
+void ReftableC::concat2() {
+	DIR* dir = opendir(path.c_str());
+	struct dirent* entry; 
+	cout<<"debut de concat2\n";
+	vector <string> reftabname,pathreftabname;
+	//vector <string> reflogname;
+	string curname,refname=this->filename;
+	int nf,ns,size,nrecc;
+	vector <int> nrecscenc;
+	cout<<"refname="<<refname<<"\n";
+	int pos=refname.find("RF.bin");
+	refname=refname.substr(0,pos+2)+"_";
+	cout<<"refname="<<refname<<"\n";
+	while ((entry = readdir(dir)) != NULL) { 
+	    curname= path+entry->d_name;
+	    if (curname.find(refname) !=string::npos) {
+	      pathreftabname.push_back(curname);
+	      reftabname.push_back(entry->d_name); 
+	    }
+;	}
+	nf = (int)reftabname.size();
+	cout<<nf<<" fichiers trouvés\n";
+	if (nf==0) {
+	  cout<<"aucun fichier trouvé. Programme terminé.\n";
+	  exit(1);
+	}
+	if (nf==1) {
+	  cout <<"un seul fichier trouvé. Pas de concaténation. Programme terminé.\n";
+	  exit(1);
+	}
+	if (nf>1) {
+	  fstream f1;
+	  f1.open(this->filename.c_str(),ios::out|ios::binary);
+	  cout<<"lecture du fichier "<<reftabname[0]<<"\n";
+	  fstream f0(pathreftabname[0].c_str(),ios::in|ios::binary);
+	  f0.seekp(0,ios::end);
+	  size=f0.tellp();
+	  f0.seekp(0,ios::beg);
+	  char* buffer = new char[size];
+	  f0.read((char*)&(this->nrec),sizeof(int));size -=4;
+	  f1.write((char*)&(this->nrec),sizeof(int));
+	  f0.read((char*)&(this->nscen),sizeof(int));size -=4;
+	  f1.write((char*)&(this->nscen),sizeof(int));	  
+	  this->nrecscen = vector <int>(this->nscen);
+	  nrecscenc = vector <int>(this->nscen);
+	  for (int i=0;i<this->nscen;i++) {f0.read((char*)&(this->nrecscen[i]),sizeof(int));size -=4;}
+	  for (int i=0;i<this->nscen;i++) f1.write((char*)&(this->nrecscen[i]),sizeof(int));
+	  f0.read(buffer,size);
+	  f1.write(buffer,size);
+	  f0.close();//remove(reftabname[0].c_str());
+	  delete [] buffer;
+	  for (int ifich=1;ifich<nf;ifich++) {
+	    cout<<"lecture du fichier "<<reftabname[ifich]<<"\n";
+	    fstream f0(pathreftabname[ifich].c_str(),ios::in|ios::binary);
+	    f0.seekp(0,ios::end);
+	    size=f0.tellp();
+	    f0.seekp(0,ios::beg);
+	    char* buffer = new char[size];
+	    f0.read((char*)&(nrecc),sizeof(int));this->nrec +=nrecc;size -=4;
+	    f0.read((char*)&(ns),sizeof(int));size -=4;
+	    for (int i=0;i<ns;i++) {
+	      f0.read((char*)&(nrecscenc[i]),sizeof(int));
+	      size -=4;
+	      this->nrecscen[i] +=nrecscenc[i];
+	    }
+	    for (int i=0;i<ns;i++) {f0.read((char*)&(nrecscenc[i]),sizeof(int));size -=4;/*cout<<"scenario "<<i<<"   nparam = "<<nrecscenc[i]<<"\n";*/}
+	    f0.read((char*)&ns,sizeof(int));size -=4;/*cout<<"nstat = "<<ns<<"\n";*/
+	    f0.read(buffer,size);
+	    f0.close();//remove(reftabname[ifich].c_str());
+	    f1.seekp(0,ios::end);f1.write(buffer,size);
+	    f1.seekp(0,ios::beg);
+	    f1.write((char*)&(this->nrec),sizeof(int));
+	    f1.seekp(8,ios::beg);
+	    for (int i=0;i<this->nscen;i++) f1.write((char*)&(this->nrecscen[i]),sizeof(int));
+	    ofstream f2(this->filelog.c_str(),ios::out);
+	    f2<<"OK\n";
+	    f2<<this->nrec<<"\n";
+	    f2.close();
+	    delete [] buffer;
+	  }
+	  f1.close();
+	  cout<<nf<<" fichiers ont été concaténés. Le fichier résultant reftableRF.bin comprend "<<this->nrec<<" datasets.\n";
+	}
+	if (not reftabname.empty()) reftabname.clear();  
+	if (not nrecscenc.empty()) nrecscenc.clear();  
 }
 
 /**
