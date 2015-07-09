@@ -364,7 +364,7 @@ int ReftableC::closefile() {
 }
 
 void ReftableC::bintotxt() {
-	cout<<"debut de bintotxt\n";
+	cout<<"Starting bintotxt\n";
 	enregC enr;
 	int bidon,npm;
 	fstream f0(this->filename.c_str(),ios::in|ios::binary);
@@ -409,7 +409,7 @@ void ReftableC::bintotxt() {
 }
 
 void ReftableC::bintotxt2() {
-	cout<<"debut de bintotxt2\n";
+	cout<<"Starting bintotxt2\n";
 	enregC enr;
 	int bidon,npm;
 	fstream f0(this->filename.c_str(),ios::in|ios::binary);
@@ -435,7 +435,7 @@ void ReftableC::bintotxt2() {
 	enr.param = vector <float>(npm);
 	enr.stat = vector <float>(this->nstat);
 	while (not fifo.eof()) {
-		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"probleme à la lecture du reftable\n";
+		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"Problem when reading reftable\n";
 		fprintf(f1,"%3d    ",enr.numscen);printf("%3d    ",enr.numscen);
 		for (int i=0;i<this->nstat;i++) fprintf(f1," %10.4f",enr.stat[i]);
 		fprintf(f1,"    ");
@@ -470,7 +470,7 @@ void ReftableC::bintocsv(HeaderC const & header) {
 	enr.param = vector <float>(npm);
 	enr.stat = vector <float>(this->nstat);
 	for (int j=0;j<this->nrec;j++) {
-		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"probleme à la lecture du reftable\n";
+		bidon=this->readrecord(&enr);if(bidon!=0) cout<<"Problem when reading reftable\n";
 		f2<<enr.numscen<<"\n";
 		for (int i=0;i<header.nstat;i++) {
 			f1<<enr.stat[i];
@@ -488,7 +488,7 @@ void ReftableC::bintocsv(HeaderC const & header) {
 void ReftableC::concat() {
 	DIR* dir = opendir(path.c_str());
 	struct dirent* entry; 
-	cout<<"debut de concat2\n";
+	cout<<"Starting the program concat2\n";
 	vector <string> reftabname,pathreftabname;
 	//vector <string> reflogname;
 	string dname;
@@ -502,19 +502,20 @@ void ReftableC::concat() {
 	    }
 ;	}
 	nf = (int)reftabname.size();
-	cout<<nf<<" fichiers trouvés\n";
+	cout<<"Looking for files with name structure reftable_$$.bin.\n";
+	cout<<nf<<" files found\n";
 	if (nf==0) {
-	  cout<<"aucun fichier trouvé. Programme terminé.\n";
+	  cout<<"No files found with name structure reftable_$$.bin. Program terminated.\n";
 	  exit(1);
 	}
 	if (nf==1) {
-	  cout <<"un seul fichier trouvé. Pas de concaténation. Programme terminé.\n";
+	  cout <<"Only one file found with name structure reftable_$$.bin. Concatenation not possible. Program terminated.\n";
 	  exit(1);
 	}
 	if (nf>1) {
 	  fstream f1;
 	  f1.open(this->filename.c_str(),ios::out|ios::binary);
-	  cout<<"lecture du fichier "<<reftabname[0]<<"\n";
+	  cout<<"Reading the file "<<reftabname[0]<<"\n";
 	  fstream f0(pathreftabname[0].c_str(),ios::in|ios::binary);
 	  f0.seekp(0,ios::end);
 	  size=f0.tellp();
@@ -533,7 +534,7 @@ void ReftableC::concat() {
 	  f0.close();//remove(reftabname[0].c_str());
 	  delete [] buffer;
 	  for (int ifich=1;ifich<nf;ifich++) {
-	    cout<<"lecture du fichier "<<reftabname[ifich]<<"\n";
+	    cout<<"Reading the file "<<reftabname[ifich]<<"\n";
 	    fstream f0(pathreftabname[ifich].c_str(),ios::in|ios::binary);
 	    f0.seekp(0,ios::end);
 	    size=f0.tellp();
@@ -562,7 +563,7 @@ void ReftableC::concat() {
 	    delete [] buffer;
 	  }
 	  f1.close();
-	  cout<<nf<<" fichiers ont été concaténés. Le fichier résultant reftableRF.bin comprend "<<this->nrec<<" datasets.\n";
+	  cout<<nf<<" Files with name structure reftable_$$.bin have been concatenated. The resulting file reftable.bin includes "<<this->nrec<<" datasets.\n";
 	}
 	if (not reftabname.empty()) reftabname.clear();  
 	if (not nrecscenc.empty()) nrecscenc.clear();  
@@ -571,7 +572,7 @@ void ReftableC::concat() {
 void ReftableC::concat2() {
 	DIR* dir = opendir(path.c_str());
 	struct dirent* entry; 
-	cout<<"debut de concat2\n";
+	cout<<"Starting the program concat2\n";
 	vector <string> reftabname,pathreftabname;
 	//vector <string> reflogname;
 	string curname,refname=this->filename;
@@ -589,19 +590,20 @@ void ReftableC::concat2() {
 	    }
 ;	}
 	nf = (int)reftabname.size();
-	cout<<nf<<" fichiers trouvés\n";
+	cout<<"Looking for files with name structure reftable_$$.bin.\n";
+	cout<<nf<<" files found\n";
 	if (nf==0) {
-	  cout<<"aucun fichier trouvé. Programme terminé.\n";
+	  cout<<"No file with name structure reftable_$$.bin have been found. Program terminated.\n";
 	  exit(1);
 	}
 	if (nf==1) {
-	  cout <<"un seul fichier trouvé. Pas de concaténation. Programme terminé.\n";
+	  cout <<"Only one file with name structure reftable_$$.bin have been found. No concatenation possible. Program terminated.\n";
 	  exit(1);
 	}
 	if (nf>1) {
 	  fstream f1;
 	  f1.open(this->filename.c_str(),ios::out|ios::binary);
-	  cout<<"lecture du fichier "<<reftabname[0]<<"\n";
+	  cout<<"Reading file "<<reftabname[0]<<"\n";
 	  fstream f0(pathreftabname[0].c_str(),ios::in|ios::binary);
 	  f0.seekp(0,ios::end);
 	  size=f0.tellp();
@@ -620,7 +622,7 @@ void ReftableC::concat2() {
 	  f0.close();//remove(reftabname[0].c_str());
 	  delete [] buffer;
 	  for (int ifich=1;ifich<nf;ifich++) {
-	    cout<<"lecture du fichier "<<reftabname[ifich]<<"\n";
+	    cout<<"Reading file "<<reftabname[ifich]<<"\n";
 	    fstream f0(pathreftabname[ifich].c_str(),ios::in|ios::binary);
 	    f0.seekp(0,ios::end);
 	    size=f0.tellp();
@@ -649,7 +651,7 @@ void ReftableC::concat2() {
 	    delete [] buffer;
 	  }
 	  f1.close();
-	  cout<<nf<<" fichiers ont été concaténés. Le fichier résultant reftableRF.bin comprend "<<this->nrec<<" datasets.\n";
+	  cout<<nf<<" Files with name structure reftable_$$.bin have been concatenated. The resulting file reftableRF.bin includes "<<this->nrec<<" datasets.\n";
 	}
 	if (not reftabname.empty()) reftabname.clear();  
 	if (not nrecscenc.empty()) nrecscenc.clear();  
