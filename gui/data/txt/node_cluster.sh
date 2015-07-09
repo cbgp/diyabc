@@ -183,7 +183,9 @@ while [ $rngNotFound ]
         then
         #debug
         #set +e
-        if  ( lockfile -r0 "${rngList[$index]}.lock") 2> /dev/null  
+        if  ( lockfile-create -r0 "${rngList[$index]}") 2> /dev/null  
+        # if you do not have lockfile-create program please use this line above :
+        #if  ( lockfile -r0 "${rngList[$index]}.lock") 2> /dev/null  
             then
             #debug
             #set -e
