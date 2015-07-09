@@ -32,7 +32,6 @@ class checkFileExistThread(QThread):
     def __check(self):
         t = 0
         while self.expTime > t :
-            print "%s " % t
             if os.path.exists(self.file) :
                 return True
             elif "remaining" not in str(self.ui.runReftableButton.text()).lower() and \
@@ -45,7 +44,6 @@ class checkFileExistThread(QThread):
 #    def updateInterfaceForSnpBin(self):
     def run(self):
         self.ui.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
-        print "run " * 100
         check = self.__check()
         if check == True :
             if "pre-processing" in str(self.ui.runReftableButton.text()).lower() :
@@ -110,14 +108,9 @@ class ProjectSnp(ProjectReftable):
             if str(commentWordsDict["maf"]) != maf :
                 output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
                 return
-        print "avt thread"
-        print self.checkSNPbin
-
-        print dataFile+".bin"
         if not os.path.exists(dataFile+".bin") :
             if self.checkSNPbin == None :
                 self.checkSNPbin = checkFileExistThread(file=dataFile+".bin", ui=self)
-            print "start " * 30
             self.checkSNPbin.start()
         #checkSNPbin.updateInterfaceForSnpBin()
         super(ProjectSnp, self).launchReftableGeneration()
