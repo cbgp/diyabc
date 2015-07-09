@@ -565,7 +565,7 @@ class ProjectReftable(Project):
         self.parent.systrayHandler.showTrayMessage("DIYABC : reftable","Reference table generation of project\n{0} has finished".format(self.name))
         self.putRefTableSize()
         self.stopUiGenReftable()
-        if int(str(self.ui.nbSetsDoneEdit.text())) != int(str(self.ui.nbSetsReqEdit.text())) :
+        if int(str(self.ui.nbSetsDoneEdit.text())) < int(str(self.ui.nbSetsReqEdit.text())) :
             log(1,"reference table generation of project %s finished with a success code but the number of data sets asked are not done."%self.name)
             output.notify(self,"Generation Error","Reference table generation of project %s finished with a success code. \
             \nBut the number of wanted data sets are not done. Maybe you asked to much simulated data sets."%self.name)
