@@ -420,7 +420,7 @@ class ProjectReftable(Project):
         except Exception as e:
             output.notify(self,"value error","Check the value of required number of data sets. Must be a positive integer.\n\n%s"%e)
             return
-        if nb_to_gen < int(self.ui.nbSetsDoneEdit.text()):
+        if nb_to_gen <= int(self.ui.nbSetsDoneEdit.text()):
             output.notify(self,"value error","Please ask for more records than it already exists")
             return
             # lire le fichier maf et s'assurer que la maf de data file correspond

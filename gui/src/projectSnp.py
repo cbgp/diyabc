@@ -32,18 +32,20 @@ class checkFileExistThread(QThread):
     def __check(self):
         t = 0
         while self.expTime > t :
+            print "%s " % t
             if os.path.exists(self.file) :
                 return True
             elif "remaining" not in str(self.ui.runReftableButton.text()).lower() and \
                     not "run computations" in str(self.ui.runReftableButton.text()).lower() :
                 self.ui.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
-            else :
-                time.sleep(self.checkTime)
-                t = t + self.checkTime
+            time.sleep(self.checkTime)
+            t = t + self.checkTime
         return False
 
 #    def updateInterfaceForSnpBin(self):
     def run(self):
+        self.ui.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
+        print "run " * 100
         check = self.__check()
         if check == True :
             if "pre-processing" in str(self.ui.runReftableButton.text()).lower() :
@@ -51,6 +53,7 @@ class checkFileExistThread(QThread):
         else :
             log(1, "checkFileExistThread could not find %s" % self.file)
         self.terminate()
+        del self
 
 
 
@@ -107,16 +110,24 @@ class ProjectSnp(ProjectReftable):
             if str(commentWordsDict["maf"]) != maf :
                 output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
                 return
-        self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
         print "avt thread"
+        print self.checkSNPbin
 
-        self.checkSNPbin = checkFileExistThread(file=dataFile+"bin", ui=self)
-        if not os.path.exists(dataFile+"bin") :
+        print dataFile+".bin"
+        if not os.path.exists(dataFile+".bin") :
+            if self.checkSNPbin == None :
+                self.checkSNPbin = checkFileExistThread(file=dataFile+".bin", ui=self)
+            print "start " * 30
             self.checkSNPbin.start()
         #checkSNPbin.updateInterfaceForSnpBin()
         super(ProjectSnp, self).launchReftableGeneration()
-        del self.checkSNPbin
-        self.checkSNPbin = None
+    def stopRefTableGen(self):
+        try :
+            self.checkSNPbin.terminate()
+        except Exception :
+            pass
+        super(ProjectSnp, self).stopRefTableGen()
+
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"
 
