@@ -5,7 +5,7 @@
 #
 # @brief Projets pour créer une table de référence SNP
 
-import os, sys, os.path
+import os, sys, os.path, time
 import codecs, traceback
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -16,6 +16,43 @@ import output
 from controlAscertBias import ControlAscertBias
 import variables
 from utils.cbgpUtils import log,isUnixText,dos2unix,getFsEncoding
+
+
+
+
+
+class checkFileExistThread(QThread):
+    def __init__(self, file, ui=None, expTime = 601, checkTime = 5, ):
+        self.expTime = expTime
+        self.checkTime = checkTime
+        self.file = file
+        self.ui = ui
+        QThread.__init__(self)
+
+    def __check(self):
+        t = 0
+        while self.expTime > t :
+            if os.path.exists(self.file) :
+                return True
+            elif "remaining" not in str(self.ui.runReftableButton.text()).lower() and \
+                    not "run computations" in str(self.ui.runReftableButton.text()).lower():
+                self.ui.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
+            else :
+                time.sleep(self.checkTime)
+                t = t + self.checkTime
+        return False
+
+#    def updateInterfaceForSnpBin(self):
+    def run(self):
+        check = self.__check()
+        if check == True :
+            if "pre-processing" in str(self.ui.runReftableButton.text()).lower() :
+                self.ui.runReftableButton.setText("Running ...")
+        else :
+            log(1, "checkFileExistThread could not find %s" % self.file)
+        self.terminate()
+
+
 
 ## @class ProjectSnp
 # @brief Projets pour créer une table de référence SNP
@@ -72,8 +109,18 @@ class ProjectSnp(ProjectReftable):
                 output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
                 return
         self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
-        super(ProjectSnp, self).launchReftableGeneration()
+        print "avt thread"
 
+        checkSNPbin = checkFileExistThread(file=dataFile+"bin", ui=self.ui)
+        if not os.path.exists(dataFile+"bin") :
+            print "thread cree"
+            checkSNPbin.start()
+            print "thread started"
+        #checkSNPbin.updateInterfaceForSnpBin()
+        print "update lancé"
+        super(ProjectSnp, self).launchReftableGeneration()
+        print "reftable lancé"
+        del checkSNPbin
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"
 
