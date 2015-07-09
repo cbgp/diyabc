@@ -22,7 +22,7 @@ from utils.cbgpUtils import log,isUnixText,dos2unix,getFsEncoding
 
 
 class checkFileExistThread(QThread):
-    def __init__(self, file, ui=None, expTime = 601, checkTime = 5, ):
+    def __init__(self, file, ui=None, expTime = 601, checkTime = 1, ):
         self.expTime = expTime
         self.checkTime = checkTime
         self.file = file
@@ -35,7 +35,7 @@ class checkFileExistThread(QThread):
             if os.path.exists(self.file) :
                 return True
             elif "remaining" not in str(self.ui.runReftableButton.text()).lower() and \
-                    not "run computations" in str(self.ui.runReftableButton.text()).lower():
+                    not "run computations" in str(self.ui.runReftableButton.text()).lower() :
                 self.ui.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
             else :
                 time.sleep(self.checkTime)
@@ -65,9 +65,8 @@ class ProjectSnp(ProjectReftable):
         self.ui.nbMicrosatLabel.hide()
         self.setGenValid(False)
         self.ui.genDataLabel.setText("Summary statistics")
-
         self.typesOrdered = ["A","H","X","Y","M"]
-
+        self.checkSNPbin = None
         #self.ui.frame_11.show()
         #self.ui.frame_12.show()
 
@@ -111,16 +110,13 @@ class ProjectSnp(ProjectReftable):
         self.runReftableButton.setText("Pre-processing of the observed dataset : please wait")
         print "avt thread"
 
-        checkSNPbin = checkFileExistThread(file=dataFile+"bin", ui=self.ui)
+        self.checkSNPbin = checkFileExistThread(file=dataFile+"bin", ui=self)
         if not os.path.exists(dataFile+"bin") :
-            print "thread cree"
-            checkSNPbin.start()
-            print "thread started"
+            self.checkSNPbin.start()
         #checkSNPbin.updateInterfaceForSnpBin()
-        print "update lancé"
         super(ProjectSnp, self).launchReftableGeneration()
-        print "reftable lancé"
-        del checkSNPbin
+        del self.checkSNPbin
+        self.checkSNPbin = None
     def getDataFileFilter(self):
         return "SNP datafile (*.snp);;all files (*)"
 
