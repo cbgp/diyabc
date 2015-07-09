@@ -377,14 +377,14 @@ class Data(DataAbstract):
         #test NM values
         errorStrNMformat = "NM value bad format :\n NM type format is like : <(NM keyword)=(float number)(NF keyword)>  with no spaces\nNM must be > or = to NF\nFor example :\n   <NM=1.0NF> (for equal sex ratio)\n   <NM=0.3NF>\n   <NM=4NF>\n"
         if not self.commentValuesDict.has_key('nm') :
-            raise Exception("Please specify sex ratio in the headline\n\n"+errorStrNMformat)
+            raise NotGenepopFileError("Please specify sex ratio in the headline\n\n"+errorStrNMformat)
         if self.commentValuesDict['nm'][-2:] != "nf" :
-                raise Exception("Can not find NF keyword\n\n"+errorStrNMformat)
+                raise NotGenepopFileError("Can not find NF keyword\n\n"+errorStrNMformat)
         try :
             if float(self.commentValuesDict['nm'][:-2]) < 0 :
-                raise Exception("Foun\n\n"+errorStrNMformat)
+                raise NotGenepopFileError("Foun\n\n"+errorStrNMformat)
         except ValueError:
-            raise Exception("Can not detect a float before NF keyword\n\n"+errorStrNMformat)
+            raise NotGenepopFileError("Can not detect a float before NF keyword\n\n"+errorStrNMformat)
 
         lociDefLines = parts[0].splitlines()[1:]
         popsLinesPart = [ popPart.splitlines() for popPart in parts[1:]]
@@ -499,7 +499,7 @@ class Data(DataAbstract):
             raise e
         except :
             log(1, traceback.format_exc())
-            raise Error("Test on genepop format failed. Please check your file format. If all seems normal, send the file or a bug report to support")
+            raise Error("Test on genepop format failed. Please check your file format. If all seems normal, send the file or a bug report to support\n\n%s"%traceback.format_exc())
 
         f=open(str(self.filename).encode(self.fsCoding),'r')
         read_data = f.read().strip()
