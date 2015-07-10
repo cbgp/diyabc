@@ -10,6 +10,7 @@ from datetime import datetime
 import shutil,traceback
 import sys, codecs
 import os
+from utils.cbgpUtils import getFsEncoding
 # les .app démarrent python avec '/' comme cwd
 if "darwin" in sys.platform and ".app/" in sys.argv[0]:
     # pour aller dans le rep où est le .app
