@@ -12,12 +12,12 @@ This can be illustrated by the following figure :
 \includegraphics[scale=0.2]{scenario_invasion_1.pdf} &
 \includegraphics[scale=0.2]{scenario_invasion_2.pdf} &
 \includegraphics[scale=0.2]{scenario_invasion_3.pdf}
-\end{tabular} 
+\end{tabular}
 \end{center}
 \end{figure}
 
-The scenarios can be parameterized in the following way : we suppose that there is a common effective population size (say $N_s$) in the three populations. This (stable) population size on the two islands has been reached after a few generations ($db$) during which the effective size was much lower (only a few migrants reached the islands which corresponds to a transitory bottleneck). Let $N_2$ and $N_3$ be these bottleneck population sizes for population 2 and 3 respectively. 
-We suppose that sample sizes are 25 diploid individuals per population, each individual having been genotyped at 10 autosomal microsatellite loci, 5 autosomal sequence loci and 1 mitochondrial sequence locus. Microsatellite loci are assumed to follow the SMM mutation model, each locus mutation rate drawn from a Gamma distribution (mean=mean mutation rate and shape=2). Autosomal sequence loci are all assumed to be 1000 nucleotide long and to follow the Kimura 2 parameter model. The number of constant sites is set to 10\% and the shape of the Gamma distribution for the mutation rate along the 1000 sites is set to 2. We also apply the same settings to the mitochondrial sequence locus. In our example, the sample of population 1 has been collected two generations after sampling population 2 and one generation before sampling population 3.\\  
+The scenarios can be parameterized in the following way : we suppose that there is a common effective population size (say $N_s$) in the three populations. This (stable) population size on the two islands has been reached after a few generations ($db$) during which the effective size was much lower (only a few migrants reached the islands which corresponds to a transitory bottleneck). Let $N_2$ and $N_3$ be these bottleneck population sizes for population 2 and 3 respectively.
+We suppose that sample sizes are 25 diploid individuals per population, each individual having been genotyped at 10 autosomal microsatellite loci, 5 autosomal sequence loci and 1 mitochondrial sequence locus. Microsatellite loci are assumed to follow the SMM mutation model, each locus mutation rate drawn from a Gamma distribution (mean=mean mutation rate and shape=2). Autosomal sequence loci are all assumed to be 1000 nucleotide long and to follow the Kimura 2 parameter model. The number of constant sites is set to 10\% and the shape of the Gamma distribution for the mutation rate along the 1000 sites is set to 2. We also apply the same settings to the mitochondrial sequence locus. In our example, the sample of population 1 has been collected two generations after sampling population 2 and one generation before sampling population 3.\\
 
 
 To provide an overview of program possibilities, we will go through the following steps :
@@ -68,7 +68,7 @@ Clicking on  \fbox{\textsf{Check scenario}} will allow the program to make some 
 
 Clicking on the \fbox{\textsf{OK}} button allows to go back to the previous screen. Before exiting this screen, you can also print and/or save the graphic representations of scenarios (click on \fbox{\textsf{PRINT}} and/or \fbox{\textsf{SAVE}}).
 \clearpage
-First click on \fbox{\textsf{Define sample sizes}} and if necessary edit the default values which are 50 individuals per sample. Here, we set all three sample sizes to 25 individuals. 
+First click on \fbox{\textsf{Define sample sizes}} and if necessary edit the default values which are 50 individuals per sample. Here, we set all three sample sizes to 25 individuals.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -76,7 +76,7 @@ First click on \fbox{\textsf{Define sample sizes}} and if necessary edit the def
 %\end{center}
 %\end{figure}
 
-Then Click on \fbox{\textsf{Choose parameter values}} to set the values of the 6 demographic parameters : \texttt{Ns}, \texttt{N2}, \texttt{N3}, \texttt{db}, \texttt{t1} and  \texttt{t2}. Sample sizes (\texttt{Ns}, \texttt{N2}, \texttt{N3}) and times (\texttt{db}, \texttt{t1} and  \texttt{t2}) are measured in number of individuals and generations, respectively. 
+Then Click on \fbox{\textsf{Choose parameter values}} to set the values of the 6 demographic parameters : \texttt{Ns}, \texttt{N2}, \texttt{N3}, \texttt{db}, \texttt{t1} and  \texttt{t2}. Sample sizes (\texttt{Ns}, \texttt{N2}, \texttt{N3}) and times (\texttt{db}, \texttt{t1} and  \texttt{t2}) are measured in number of individuals and generations, respectively.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -103,9 +103,9 @@ This screen has three red lights, one for each category of loci that requires a 
 %\end{figure}
 
 
- 
+
 We choose the SMM model, meaning we set the mean coefficient P and the corresponding shape of the to Gamma to 0 (third and fourth edit windows from top), we exclude Single nucleotide indel mutations (Mean SNI rate and Shape of the Gamma set to 0) and keep the default values for mean mutation rate and for the shape of the Gamma distribution for individual loci mutation rates as shown on screen of top of next page. We also keep default values for locus names, motif sizes and allele ranges.\\
-It is worth stressing here that it is difficult to directly infer the range of microsatellite loci from a real data set, as the latter usually only includes a subset of populations of a single species. A value of 30 to 60 continuous allelic states is traditionally chosen in simulation studies based on microsatellite data. One of us (AE) recently made a meta-analysis on a large number of microsatellite loci and a large number of species (i.e. more than 100 species) which has shown that, although a large variance exists among loci and species, the mean allele size range (over all loci and over all species) was close to 40 continuous allelic states (data/results not shown). Therefore we have chosen the later value as default value. A larger allele size range within the real data set is automatically detected by DIYABC which provides a warning message to the user in this case. It is worth noting that results are usually robust to assumptions on allele size constraints (30 to 60 continuous allelic states; e.g. Pascual et al. 2007). 
+It is worth stressing here that it is difficult to directly infer the range of microsatellite loci from a real data set, as the latter usually only includes a subset of populations of a single species. A value of 30 to 60 continuous allelic states is traditionally chosen in simulation studies based on microsatellite data. One of us (AE) recently made a meta-analysis on a large number of microsatellite loci and a large number of species (i.e. more than 100 species) which has shown that, although a large variance exists among loci and species, the mean allele size range (over all loci and over all species) was close to 40 continuous allelic states (data/results not shown). Therefore we have chosen the later value as default value. A larger allele size range within the real data set is automatically detected by DIYABC which provides a warning message to the user in this case. It is worth noting that results are usually robust to assumptions on allele size constraints (30 to 60 continuous allelic states; e.g. Pascual et al. 2007).
 Finally, we would like to stress the fact that the number of alleles and the allele size range at a locus are two different features of a locus. For instance one can have a locus for which the observed allele size range in the genotyped populations (defined as (size\_max - size\_min)/size of repeat unit) is say 30, whereas the total number of observed alleles is substantially lower.\\
 
 We get the following screen :
@@ -126,7 +126,7 @@ We go back to the previous "Genetic data" screen (click on \fbox{$OK$}) and proc
 %\end{figure}
 
 Clicking on the \fbox{\textsf{Define mutation model}} of autosomal diploid sequence loci leads to the following screen (top of next page).\\
- We keep all default values includingt that of the mean mutation rate (5E-9). The default mutation model is the Kimura 2 parameters, with 10\% of invariant sites and a shape of the Gamma equal to 2. Default sequence length is 1000 nucleotides and all four nucleotides are in equal frequencies. Finally, the mean kappa coefficient (transition/transversion) is set to 10 by default. 
+ We keep all default values includingt that of the mean mutation rate (5E-9). The default mutation model is the Kimura 2 parameters, with 10\% of invariant sites and a shape of the Gamma equal to 2. Default sequence length is 1000 nucleotides and all four nucleotides are in equal frequencies. Finally, the mean kappa coefficient (transition/transversion) is set to 10 by default.
 
 \newpage
 
@@ -136,7 +136,7 @@ Clicking on the \fbox{\textsf{Define mutation model}} of autosomal diploid seque
 %\end{center}
 %\end{figure}
 
-Back to the "Genetic data" screen (click on \fbox{$OK$}), we define the mutation model of the mitochondrial sequence in the same way. As for autosomal sequences, we keep all default values including the mean mutation rate set to 5E-8 for mitochondrial DNA sequences \citep{HL2008}. However, since there is a single locus, we set the two shapes of the Gamma distribution (for the mutation rate and the kappa coefficient)  to 0 since we want its parameters identical to the mean values. 
+Back to the "Genetic data" screen (click on \fbox{$OK$}), we define the mutation model of the mitochondrial sequence in the same way. As for autosomal sequences, we keep all default values including the mean mutation rate set to 5E-8 for mitochondrial DNA sequences \citep{HL2008}. However, since there is a single locus, we set the two shapes of the Gamma distribution (for the mutation rate and the kappa coefficient)  to 0 since we want its parameters identical to the mean values.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -244,7 +244,7 @@ Clicking on the \fbox{\textsf{Data file}} button allows to choose a data set thr
 %\end{center}
 %\end{figure}
 
-We type the name of the data file that was just simulated before or click on it in the list. The program 
+We type the name of the data file that was just simulated before or click on it in the list. The program
 looks for any reference table made for this particular data set and that would be present in the same directory.\\
 \newpage
  Since there is no such reference table, the screen will look like this :
@@ -337,7 +337,7 @@ the minimum and maximum values of \texttt{db}  to 5. It results that \texttt{db}
 %\end{center}
 %\end{figure}
 
-By imposing a condition on parameters ($\texttt{t2}>\texttt{t1}$), we were offered a choice between two options. The default option is that successive sets of parameter values are drawn at random until one set fulfills all imposed conditions. The other option is to draw a single set. If it fulfills all conditions, then the set is used to produce a data set that is recorded in the reference table. If it does not, no data set is simulated and nothing is added to the reference table. Here we leave the default option.  
+By imposing a condition on parameters ($\texttt{t2}>\texttt{t1}$), we were offered a choice between two options. The default option is that successive sets of parameter values are drawn at random until one set fulfills all imposed conditions. The other option is to draw a single set. If it fulfills all conditions, then the set is used to produce a data set that is recorded in the reference table. If it does not, no data set is simulated and nothing is added to the reference table. Here we leave the default option.
 \\
 We can now leave this screen and inform the next one by clicking on the \fbox{\textsf{$>>$}} next button. \\
 \newpage
@@ -358,7 +358,7 @@ We start clicking on the \fbox{\textsf{Define mutation model}} of the 10 microsa
 %\end{center}
 %\end{figure}
 
-We keep all default values except for the SNI mutation rate that we set to 0 (minimum and maximum of the mean rate to fix the mean rate to 0 and shape of the Gamma distribution to have all loci rates identical to the mean). Note that leaving default values for coefficient P  means that in the reference table, we choose a GSM model. In this particular case, we know that the datafile has been simulated with the SMM, but with observed data files, we do not know and we (almost surely) will not choose the true mutation model. So let us see whether choosing an erroneous model (GSM instead of SMM) will lead to some erroneous conclusions in this case.  
+We keep all default values except for the SNI mutation rate that we set to 0 (minimum and maximum of the mean rate to fix the mean rate to 0 and shape of the Gamma distribution to have all loci rates identical to the mean). Note that leaving default values for coefficient P  means that in the reference table, we choose a GSM model. In this particular case, we know that the datafile has been simulated with the SMM, but with observed data files, we do not know and we (almost surely) will not choose the true mutation model. So let us see whether choosing an erroneous model (GSM instead of SMM) will lead to some erroneous conclusions in this case.
 
 \newpage
 %\begin{figure}[h]
@@ -367,7 +367,7 @@ We keep all default values except for the SNI mutation rate that we set to 0 (mi
 %\end{center}
 %\end{figure}
 
-When we are happy with the content of this screen, we click on the  \fbox{\textsf{OK}} to go back to the previous screen in which the corresponding red light has turned green. We do the same for the mutation model of the two sequence loci categories (next two screens). 
+When we are happy with the content of this screen, we click on the  \fbox{\textsf{OK}} to go back to the previous screen in which the corresponding red light has turned green. We do the same for the mutation model of the two sequence loci categories (next two screens).
 
 %\begin{figure}[h]
 %\begin{center}
@@ -452,13 +452,13 @@ We can now click on the next ( \fbox{\textsf{$>>$}}) button and get the followin
 
 
 The next screen  corresponds to the building of the reference table. The default value for the number of newly simulated data is 1,000,000 per scenario, i.e. 3,000,000 in our three scenario case and the reference table is empty.
-We set the number of simulated data sets to e.g. 1,500,000, which corresponds to 500,000 datasets per scenario, 
-% \footnote{The current models have each 6 true parameters (3 effective sizes, 2 divergence times and the mean mutation rate). They define a space (the parameter space) that needs to be explored thoroughly enough.  There is no precise rule to compute the number of simulated data sets required in any reference table. However, it is usually considered reasonable to take it of the order of 10$^p$ ($p$=number of parameters), which would put it here at 10$^6$ for each scenario.} 
+We set the number of simulated data sets to e.g. 1,500,000, which corresponds to 500,000 datasets per scenario,
+% \footnote{The current models have each 6 true parameters (3 effective sizes, 2 divergence times and the mean mutation rate). They define a space (the parameter space) that needs to be explored thoroughly enough.  There is no precise rule to compute the number of simulated data sets required in any reference table. However, it is usually considered reasonable to take it of the order of 10$^p$ ($p$=number of parameters), which would put it here at 10$^6$ for each scenario.}
 and click on the \fbox{\textsf{START}} button.
 
 \newpage
 
- We can follow the progression of simulations on the progress bar and on the label at the center of the screen. The program also provides the current size of the reference table file (updated every 10000 simulated data sets) as well as an estimation of the remaining computation time. Note that during data simulation, only the \fbox{\textsf{STOP}} button is active. It has to be clicked on before any other control. 
+ We can follow the progression of simulations on the progress bar and on the label at the center of the screen. The program also provides the current size of the reference table file (updated every 10000 simulated data sets) as well as an estimation of the remaining computation time. Note that during data simulation, only the \fbox{\textsf{STOP}} button is active. It has to be clicked on before any other control.
 
 
 %\begin{figure}[h]
@@ -468,7 +468,7 @@ and click on the \fbox{\textsf{START}} button.
 %\end{figure}
 
 
-When the 1,500,000 data sets have been simulated (this took about 15 hours on a desktop equipped with a  X5550 Intel bi-processor), the screen disappears and is replaced by the following Data and analysis screen. 
+When the 1,500,000 data sets have been simulated (this took about 15 hours on a desktop equipped with a  X5550 Intel bi-processor), the screen disappears and is replaced by the following Data and analysis screen.
 
 
 
@@ -483,7 +483,7 @@ This screen tells us that a reference table named \texttt{gp\_001.reftable} is n
 \newpage
 
 If for any reason,  we want to look at the content of the reference table \texttt{gps\_001.reftable}, we need to convert the file format from binary to text. We need to go back to the previous screen by choosing the (default) option "Append new simulations to the reference table" and clicking three times on the  \fbox{\textsf{$>>$}} button. We then click on the option \texttt{Export reference table} in the \texttt{Options} menu :
- 
+
 % \begin{figure}[h]
 %\begin{center}
 %\includegraphics[scale=0.8]{ss5png/screen36.png}
@@ -505,14 +505,14 @@ Click on \fbox{\textsf{START}} to begin the conversion. The window will automati
 %\includegraphics[scale=0.5]{ss5png/screen38.png}
 %\end{center}
 %\end{figure}
- 
+
 
 Once a sufficiently large reference table has been built, we can proceed to the estimation part of the ABC analysis, the latter using the binary file \texttt{gps\_001.reftable}. To do so, click on the option \texttt{Data and analysis} of the \texttt{Options} menu (see top of page). You can also quit the program (same menu, \texttt{Quit} option).
 
 \newpage
 \subsection{Pre-evaluation of scenario-prior combinations}
 
-If we have quitted the program, we launch it again and select the top button \fbox{\textsf{Perform an ABC analysis}}. On the following screen, we click on the \fbox{\textsf{Data file}} button and select the data file \texttt{gps\_001.txt }. The program finds now a reference table made for this data file (screen below). If we did not exit the program and used the  \texttt{Data and analysis}  option instead (see bottom of p28), the screen below is skipped and the default option is taken automatically. 
+If we have quitted the program, we launch it again and select the top button \fbox{\textsf{Perform an ABC analysis}}. On the following screen, we click on the \fbox{\textsf{Data file}} button and select the data file \texttt{gps\_001.txt }. The program finds now a reference table made for this data file (screen below). If we did not exit the program and used the  \texttt{Data and analysis}  option instead (see bottom of p28), the screen below is skipped and the default option is taken automatically.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -520,7 +520,7 @@ If we have quitted the program, we launch it again and select the top button \fb
 %\end{center}
 %\end{figure}
 
-We take the default option and exit the window (click on \fbox{\textsf{OK}} button). We are back to the Data and analysis screen (screenshot below which is the same as that shown on page 38). 
+We take the default option and exit the window (click on \fbox{\textsf{OK}} button). We are back to the Data and analysis screen (screenshot below which is the same as that shown on page 38).
 
 %\begin{figure}[h]
 %\begin{center}
@@ -530,7 +530,7 @@ We take the default option and exit the window (click on \fbox{\textsf{OK}} butt
 
 In this example, the "observed data file" has been actually simulated. Hence we know the true scenario and the true values of the parameters. However, this is not generally the case with biological data. It is therefore a wise step before any further treatment to check whether the combination of scenario(s) and prior distributions of their parameters can indeed produce data sets that are similar enough to the observed data set. This can be achieved through the option "Pre-evaluate scenario-prior combinations" at the bottom of the "Data and Analysis" screen. This option is designed to detect models unable to explain the data. This can happen with mis-specified  evolutionary scenario(s) or  prior distribution(s).
 
-\newpage 
+\newpage
 Clicking on the next (\fbox{\textsf{$>>$}}) button leads to the following screen :
 
 %\begin{figure}[h]
@@ -538,11 +538,11 @@ Clicking on the next (\fbox{\textsf{$>>$}}) button leads to the following screen
 %\includegraphics[scale=0.4]{ss5png/screen71.png}
 %\end{center}
 %\end{figure}
- 
- There are two options proposed to the user : 
+
+ There are two options proposed to the user :
  \begin{enumerate}
  \item perform a principal component analysis (PCA) of the first (up to) 100,000 simulated data sets of the reference table in the space of summary statistics, and evaluate the position of the observed data set compared to simulated data sets,
- \item  locate each summary statistics of the observed data set among those of the simulated data sets.    
+ \item  locate each summary statistics of the observed data set among those of the simulated data sets.
 
 \end{enumerate}
 
@@ -569,7 +569,7 @@ We observe that most observed summary statistics are well in the range of simula
 \subsection{Compare scenarios by computing their posterior probabilities}
 
 
-We select the option to compare scenarios (bottom option : \emph{Compute posterior probabilities of scenarios}) and we click on the \fbox{\textsf{$>>$}} button three times until reaching the following screen (next page). 
+We select the option to compare scenarios (bottom option : \emph{Compute posterior probabilities of scenarios}) and we click on the \fbox{\textsf{$>>$}} button three times until reaching the following screen (next page).
 
 
 %\begin{figure}[h]
@@ -591,14 +591,14 @@ We can then choose the number of simulated data from the reference table that we
 \newpage
 
 Clicking on the \fbox{\textsf{Run computations}} button starts the computations and the progression is visible in a new window as shown below.
- 
+
 %\begin{figure}[h]
 %\begin{center}
 %\includegraphics[scale=0.5]{ss5png/screen43.png}
 %\end{center}
 %\end{figure}
 
-At the end, this windows shows a log of all computations which can be saved in a log file ( \fbox{\textsf{Save log file}} button). 
+At the end, this windows shows a log of all computations which can be saved in a log file ( \fbox{\textsf{Save log file}} button).
 
 %\begin{figure}[h]
 %\begin{center}
@@ -617,9 +617,9 @@ On the left, posterior probabilities of scenarios are simply the relative propor
 %\end{center}
 %\end{figure}
 
- In this particular example, both approaches are congruent and show maximum support for the first (i.e. true) scenario. Such a clear output is far from being the rule when analyzing real data sets. In our experience, the logistic regression is generally more discriminant than the direct estimate \citep{C2008}. Also, the direct estimate is more sensitive to the number of closest simulated data sets than the logistic regression (clearly taking more and more simulated data sets, the direct estimate will converge towards  prior probabilities). However, with too low numbers of closest data sets, the logistic regression can be unstable and the default proportion of 1\% seems to be a threshold above which stable results are generally obtained \citep[see e.g.][]{G2010,L2010}. 
- 
- 
+ In this particular example, both approaches are congruent and show maximum support for the first (i.e. true) scenario. Such a clear output is far from being the rule when analyzing real data sets. In our experience, the logistic regression is generally more discriminant than the direct estimate \citep{C2008}. Also, the direct estimate is more sensitive to the number of closest simulated data sets than the logistic regression (clearly taking more and more simulated data sets, the direct estimate will converge towards  prior probabilities). However, with too low numbers of closest data sets, the logistic regression can be unstable and the default proportion of 1\% seems to be a threshold above which stable results are generally obtained \citep[see e.g.][]{G2010,L2010}.
+
+
  . Graphs can be printed (\fbox{\textsf{Print graphs}} button) and saved (\fbox{\textsf{Save graphs}} button) and numerical values can be saved (\fbox{\textsf{Save output}} button).\\
 Below is a reproduction of the output file (obtained by clicking on the \fbox{\textsf{Save output}} button. The 95\% confidence limits for the direct approach are simply the 95\% bounds of a binomial proportion and should not be considered as those of the posterior probability of scenarios.  For the logistic approach on the contrary, the 95\% confidence interval is much more meaningful, at least for sample sizes that are small enough to justify a linear approximation of the logit of posterior probabilities \citep[see][]{C2008}.
 
@@ -655,7 +655,7 @@ Example 1 shows the data sets simulated with the three scenarios on the first pl
 \newpage
 \subsection{Estimate posterior distributions of parameters}
 
-Restarting the program as in section 3.3, or going directly from last screen using the option "Data and analysis" of the "Options" menu, we reach the "Data and analysis" screen.We choose the second option "Estimate posterior distributions of parameters and model checking". 
+Restarting the program as in section 3.3, or going directly from last screen using the option "Data and analysis" of the "Options" menu, we reach the "Data and analysis" screen.We choose the second option "Estimate posterior distributions of parameters and model checking".
 
 %\begin{figure}[h]
 %\begin{center}
@@ -676,7 +676,7 @@ We can choose any combination of at least one scenario. If a single scenario is 
 When exiting the previous screen (scenario choice), we get the following screen, which is similar to the one for running comparison of scenario. However, it offers two additional choices : "transformation of parameters" and "choice of parameters".\\
  Most generally, parameters take values on bounded intervals, with positive bounds. If no transformation is applied to parameters, it may happen that samples from the posterior distribution, obtained through local linear regressions, contain values outside the prior limits. It is therefore advisable to perform the regression on transformed parameter values and to backtransform them at the end. Let's use the \emph{logit} transformation (default choice), but the program allows also the \emph{log-tg} \citep{HS2005} or the simple \emph{log} transformation \citep{EB2004}, as well as no transformation at all
 \footnote{$logit(x,a,b)=log(\frac{x-a}{b-x})$ and \emph{log-tg}$(x,a,b)=log(tg(\frac{x-a}{b-a}\frac{\pi}{2}))$ with $a$ and $b$ lower and upper bound of prior interval, respectively.}. Note that only the $logit$ and $log-tg$ transformations ensure that sampled values from the posterior distribution of parameters will be within prior limits.\\
-Original parameters are effective population sizes, times, admixtures rates and mean mutation parameters ($\bar{\mu}$ and $\bar{P}$). However, in many instances, scaled parameters are easier to estimate (they are sometimes the only estimable parameters). So if the "composite" box is ticked, the program will estimate parameters $\theta  = N_e\mu$ and $\tau = t\mu$. 
+Original parameters are effective population sizes, times, admixtures rates and mean mutation parameters ($\bar{\mu}$ and $\bar{P}$). However, in many instances, scaled parameters are easier to estimate (they are sometimes the only estimable parameters). So if the "composite" box is ticked, the program will estimate parameters $\theta  = N_e\mu$ and $\tau = t\mu$.
 %\begin{figure}[h]
 %\begin{center}
 %\includegraphics[scale=0.45]{ss5png/screen51.png}
@@ -694,7 +694,7 @@ A new window opens on top of the previous one. It shows the progression of compu
 %\end{center}
 %\end{figure}
 
-When the computations are over (\textsf{COMPUTATION TERMINATED} at the bottom of the window, screen below), we close this window (\fbox{\textsf{Close window}} button). The other button {\fbox{\textsf{Save log file}} can be used to save the content of the window (i.e. log file). 
+When the computations are over (\textsf{COMPUTATION TERMINATED} at the bottom of the window, screen below), we close this window (\fbox{\textsf{Close window}} button). The other button {\fbox{\textsf{Save log file}} can be used to save the content of the window (i.e. log file).
 
 %\begin{figure}[h]
 %\begin{center}
@@ -705,7 +705,7 @@ When the computations are over (\textsf{COMPUTATION TERMINATED} at the bottom of
 \newpage
 
 The underlying window reappears showing the posterior distributions of all original and composite parameters. The red and green lines show the prior and posterior distributions, respectively. In the title of each graph is also given a point estimate, which is the median of the posterior distribution.\\
-Below each graph, there is a set of summary statistics of the posterior distribution of the parameter. 
+Below each graph, there is a set of summary statistics of the posterior distribution of the parameter.
 
 
 %\begin{figure}[h]
@@ -738,7 +738,7 @@ Clicking on the \fbox{\textsf{Save [phi*]}} button allows to save the parameter 
 
 \newpage
 \subsection{Model checking}
-In Bayesian analysis assessing the Ògoodness-of-fitÓ of a model (here a scenario) is termed model checking. Following Gelman et al. (1995; pp 159-163), if a model fits then replicated data generated under the model should look similar to observed data. To put it another way, the observed data should look plausible under the posterior predictive distribution. This is really a self-consistency check: an observed discrepancy can be due to model misfit (demographic and/or marker models) or chance. We implemented an option in DIYABC to measure the discrepancy between model and real data by considering various sets of test quantities. These test quantities can be chosen among the large set of ABC summary statistics proposed in DIYABC. For details and examples regarding the choice of summary statistics as test quantities, see \citet{C2010}.\\
+In Bayesian analysis assessing the ï¿½goodness-of-fitï¿½ of a model (here a scenario) is termed model checking. Following Gelman et al. (1995; pp 159-163), if a model fits then replicated data generated under the model should look similar to observed data. To put it another way, the observed data should look plausible under the posterior predictive distribution. This is really a self-consistency check: an observed discrepancy can be due to model misfit (demographic and/or marker models) or chance. We implemented an option in DIYABC to measure the discrepancy between model and real data by considering various sets of test quantities. These test quantities can be chosen among the large set of ABC summary statistics proposed in DIYABC. For details and examples regarding the choice of summary statistics as test quantities, see \citet{C2010}.\\
 In the previous screen ("ABC parameter estimation"), let us click on the \fbox{\textsf{Model checking}} button. The following screen appears :
 
 %\begin{figure}[h]
@@ -772,7 +772,7 @@ Clicking on the \fbox{\textsf{OK}} button, we get the screen allowing to choose 
 %\end{center}
 %\end{figure}
 
-We keep the default value for the number of new data sets(1000) and launch simulation by clicking on the \fbox{\textsf{Run computation}}. First the program counts how many of the 5010 phistars comply with the conditions set on the parameters. Because of the "correction" by the local linear regression, some phistars are such that they do not observe the conditions. We have to extract them because they might not allow a regular simulation of a data set. 
+We keep the default value for the number of new data sets(1000) and launch simulation by clicking on the \fbox{\textsf{Run computation}}. First the program counts how many of the 5010 phistars comply with the conditions set on the parameters. Because of the "correction" by the local linear regression, some phistars are such that they do not observe the conditions. We have to extract them because they might not allow a regular simulation of a data set.
 
 Actually, there were 5010-4987=23 problematic phistars. A thousand set of phistars (among the 4987) has been drawn at random  (with replacement) and have been used to simulate a data set (1000 data sets in total) according to the chosen scenario (scenario 1).
 
@@ -791,7 +791,7 @@ When we close the window (clicking the \fbox{\textsf{CLOSE}} button), the previo
 %\end{center}
 %\end{figure}
 
-Let us click on the \fbox{\textsf{PERFORM PCA}} button.\\ 
+Let us click on the \fbox{\textsf{PERFORM PCA}} button.\\
 
 Below and next page are two views of this PCA where we can see a good fit of the posterior distribution (The observed yellow dot is among the large red dots from the posterior distribution, the small red dots corresponding to the prior distribution). \\
 
@@ -833,7 +833,7 @@ To evaluate the performances of the parameter estimation through our ABC analysi
 %\end{center}
 %\end{figure}
 
-In any case, the following screen appears in which are selected the scenario used to simulate data sets  and the way in which parameters are given values (fixed values or values drawn from distributions). 
+In any case, the following screen appears in which are selected the scenario used to simulate data sets  and the way in which parameters are given values (fixed values or values drawn from distributions).
 
 %\begin{figure}[h]
 %\begin{center}
@@ -880,7 +880,7 @@ We keep all default values including the number of test data sets (500) and clic
 %\end{center}
 %\end{figure}
 
-Once computations are terminated (screen below), we can save the content of the window if necessary (button \fbox{\textsf{Save log file}}) and/or close the window.  
+Once computations are terminated (screen below), we can save the content of the window if necessary (button \fbox{\textsf{Save log file}}) and/or close the window.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -939,7 +939,7 @@ The following screen appears in which the chosen scenario is highlighted (in red
 %\includegraphics[scale=0.38]{ss5png/screen87.png}
 %\end{center}
 %\end{figure}
- 
+
 On the next screen, we can choose prior distributions for the mutation models of each category of loci (test data sets). We proceed exactly in the same way as in the previous section (3.7 Compute bias and precision, bottom of p57).
 
 %\begin{figure}[h]
@@ -949,7 +949,7 @@ On the next screen, we can choose prior distributions for the mutation models of
 %\end{figure}
 
 \newpage
-Clicking on the \fbox{\textsf{$>>$}} button, the following screen, entitled "Confidence in scenario choice",appears. We keep all default values including the  1\% (i.e. 15,000) proportion for the number of closest data sets used for the logistic regression. 
+Clicking on the \fbox{\textsf{$>>$}} button, the following screen, entitled "Confidence in scenario choice",appears. We keep all default values including the  1\% (i.e. 15,000) proportion for the number of closest data sets used for the logistic regression.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -984,7 +984,7 @@ After the summary column, there may be a comment such as "only one scenario pres
 
 Results can be printed and/or saved by clicking on the corresponding buttons. On the next page is an extract of the output.\\
 
-To compute type I and type II error, see subsection 2.11.3. 
+To compute type I and type II error, see subsection 2.11.3.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -993,6 +993,3 @@ To compute type I and type II error, see subsection 2.11.3.
 %\end{center}
 %\end{figure}
 \newpage
-
-
-
