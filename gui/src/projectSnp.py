@@ -23,6 +23,7 @@ from utils.cbgpUtils import log,isUnixText,dos2unix,getFsEncoding
 
 class checkFileExistThread(QThread):
     def __init__(self, file, ui=None, expTime = 601, checkTime = 1, ):
+        self.fsCoding = getFsEncoding(logLevel=False)
         self.expTime = expTime
         self.checkTime = checkTime
         self.file = file
@@ -32,7 +33,7 @@ class checkFileExistThread(QThread):
     def __check(self):
         t = 0
         while self.expTime > t :
-            if os.path.exists(self.file) :
+            if os.path.exists(self.file.encode(self.fsCoding)) :
                 return True
             elif "remaining" not in str(self.ui.runReftableButton.text()).lower() and \
                     not "run computations" in str(self.ui.runReftableButton.text()).lower() :
@@ -86,11 +87,11 @@ class ProjectSnp(ProjectReftable):
         dataFile = str(self.ui.dataFileEdit.text())
         if int(self.ui.nbSetsDoneEdit.text() )< 1 or not os.path.exists((u"%s/reftable.bin"%self.dir).encode(self.fsCoding)):
             log(3,"No reftable.bin found, try to remove %s and %s"%(dataFile+".bin", dataFile+"bin.txt"))
-            if os.path.exists(dataFile+".bin") :
-                os.remove(dataFile+".bin")
+            if os.path.exists((dataFile+".bin").encode(self.fsCoding)) :
+                os.remove((dataFile+".bin").encode(self.fsCoding))
                 log(3, "%s removed" % (dataFile+".bin"))
-            if os.path.exists(dataFile+"bin.txt") :
-                os.remove(dataFile+"bin.txt")
+            if os.path.exists((dataFile+"bin.txt").encode(self.fsCoding)) :
+                os.remove((dataFile+"bin.txt").encode(self.fsCoding))
                 log(3, "%s removed" % (dataFile+"bin.txt"))
         else :
             f=open(dataFile.encode(self.fsCoding),'r')
@@ -108,7 +109,7 @@ class ProjectSnp(ProjectReftable):
             if str(commentWordsDict["maf"]) != maf :
                 output.notify(self,"MAF value error","The actual reftable was generated with <MAF=%s> but your data file %s says <MAF=%s> !\nRemove your reftable.bin file or fix your maf data file" % (maf, dataFile ,commentWordsDict["maf"]))
                 return
-        if not os.path.exists(dataFile+".bin") :
+        if not os.path.exists((dataFile+".bin").encode(self.fsCoding)) :
             if self.checkSNPbin == None :
                 self.checkSNPbin = checkFileExistThread(file=dataFile+".bin", ui=self)
             self.checkSNPbin.start()
