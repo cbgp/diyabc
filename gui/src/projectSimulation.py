@@ -97,7 +97,7 @@ class ProjectSimulation(Project):
             output.notify(self,"Error","With this version, you cannot have more than 100 \
                         project directories\nfor the same project name and in the same directory")
         else:
-            newdir = path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1))
+            newdir = str(path+"_%i_%i_%i-%i"%(dd.year,dd.month,dd.day,(cd+1)))
             self.ui.dirEdit.setText(newdir)
             try:
                 os.mkdir(newdir.encode(self.fsCoding))

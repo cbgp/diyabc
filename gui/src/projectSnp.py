@@ -97,7 +97,7 @@ class ProjectSnp(ProjectReftable):
             words = f.readline().strip().split()
             f.close()
             commentWordsDict = DataAbstract.getParseCommentWordsDict(words)
-            f=open((os.path.join(self.dir,"maf.txt")).encode(self.fsCoding),'r')
+            f=open((os.path.join(str(self.dir),"maf.txt")).encode(self.fsCoding),'r')
             maf = f.readline().strip().lower()
             f.close()
             if "hudson" in maf :

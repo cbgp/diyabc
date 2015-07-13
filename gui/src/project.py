@@ -30,6 +30,8 @@ class Project(baseProject,formProject):
         self.parent=parent
         self.name=name
         self.dir=dir
+        if self.dir != None :
+            self.dir = str(self.dir)
 
         self.fsCoding = getFsEncoding(logLevel=False)
 
